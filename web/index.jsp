@@ -48,7 +48,7 @@
       <script src="script/controller/controllerSideNavBar.js" type="text/javascript"></script>
       <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/documentosController.js" type="text/javascript"></script>
-
+      
       <script src="script/controller/searchController.js" type="text/javascript"></script>
     <!--Dialog controllers -->
     <script src="script/controller/dialogControllers/documentDialogController.js" type="text/javascript"></script>
@@ -95,15 +95,20 @@
         <div class="md-dialog-content">
         <form ng-submit="$event.preventDefault()" novalidate name="formDocument">
         <!-------------------------------------------->
-
-
+<div ng-hide="update"> 
+ <p>
+		Seleccione un archivo : <input required type="file" file-Model="myFile" name="file" size="45" />
+	   </p>
+   </div>
+   </br>
+   
         <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
         <input md-autofocus autofocus  required  id="name" ng-model="document.name" type="text" class="validate">
-        <label for="name">Nombre</label>
+        <label for="name">Nombre (campo obligatorio) </label>
         </div>
 <!-------------------------------------------->
         <div class="input-field col ">
-        <label  ng-if="!update" for="description">Descripción</label>
+        <label  ng-if="!update" for="description">Descripción  (campo obligatorio)</label>
         <textarea  id="description" ng-model="document.description"   class="materialize-textarea" class="validate" required></textarea>
 
         </div>
@@ -131,16 +136,16 @@
 
 	<form action="api/hello/upload" method="post" enctype="multipart/form-data">
  -->
- <div ng-if="!update"> 
-	   <p>
-		Seleccione un archivo : <input required type="file" file-Model="myFile" name="file" size="45" />
-	   </p>
-</div>
+	  
+
 	 <!--  <input type="submit" value="Upload It" /> -->
 	 <!-- </form> -->
         <!-------------------------------------------->
      
-          
+           <br>
+    
+
+       <br>
            <input type="color" name="color1" id="color1" ng-model="document.color"></br>
       <label>Color :   {{document.color}}</label> 
        
