@@ -1,5 +1,6 @@
 app.service('documentosService',function($http){
     var documents = [];
+    var dates = {};
        var document = "";
        var $event = "";
  var changeDocument = function(event,d) {
@@ -14,8 +15,17 @@ app.service('documentosService',function($http){
       });
       return promise;
     },
+     getDatesDTO: function() {
+      var promise = $http.get('/FIMDocumentos/FIMRest/hello/getDatesDTO').then(function (response) {
+      dates = response.data;
+      });
+      return promise;
+    },
     getList: function() {
        return documents;
+    },
+    getDates: function() {
+       return dates;
     },
     addToList : function(document){
           documents.unshift(document);

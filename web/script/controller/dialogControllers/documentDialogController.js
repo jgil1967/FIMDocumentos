@@ -1,5 +1,5 @@
-  app.controller('documentDialogController',['$scope','$http','$timeout', '$q','documentosService','$mdDialog', 'fileUpload','tagsService','documentKeywordRelationshipService', 
-      function($scope,$http,$timeout, $q,documentosService,$mdDialog, fileUpload,tagsService,documentKeywordRelationshipService) {
+  app.controller('documentDialogController',['$scope','$http','$filter','$timeout', '$q','documentosService','$mdDialog', 'fileUpload','tagsService','documentKeywordRelationshipService', 
+      function($scope,$http,$filter,$timeout, $q,documentosService,$mdDialog, fileUpload,tagsService,documentKeywordRelationshipService) {
          
           $scope.$watch(function(){return documentosService.getDocument();}, function (document) {
              
@@ -20,7 +20,8 @@
      }
       });
                       } else {
-                   // window.console.log("Es update");
+               
+                    document.fileDate = new Date(document.fileDate);
                     $mdDialog.show({
                         controller: documentDialogController,
                         controllerAs: 'ctrl',
@@ -42,13 +43,20 @@
           function documentDialogController($scope,$http,$timeout, $q,documentosService,document,update,fileUpload,tagsService,documentKeywordRelationshipService)
         {
             
+
+             
+$scope.document  = document;
               $scope.update = update;
             $scope.tags = [];
             $scope.tagsOriginales = [];
+//            window.console.log(JSON.stringify($scope.document ));
+      
+            
             if ($scope.update == true) {
-              //  window.console.log(JSON.stringify(document.keywords));
+              
                 $scope.tags = document.keywords;
                 $scope.tagsOriginales = $scope.tags;
+              
             }
 
 
@@ -77,7 +85,7 @@
   
    }
   
-            $scope.document  = document;
+            
              $scope.cancel = function ($event) {
                 $mdDialog.cancel();
             };

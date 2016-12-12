@@ -16,7 +16,7 @@ import javax.sql.DataSource;
  * @author jonathangilsantillan
  */
 public class getTomcatDataSource {
-
+ 
   DataSource ds = null;
    public  javax.sql.DataSource  getTomcatDataSource () throws NamingException
   

@@ -1,7 +1,7 @@
 app.controller('searchController', ['$scope','$routeParams','topBannerService','objectsService','$location','$timeout',
     function ($scope, $routeParams,topBannerService,objectsService,$location,$timeout)
     {
-        
+        topBannerService.setTitle("Búsqueda");
          $scope.options = {
     rowSelection: false,
     multiSelect: false,
@@ -53,7 +53,7 @@ app.controller('searchController', ['$scope','$routeParams','topBannerService','
             $scope.object = {
             query : $routeParams.searchTerm
         };
-            window.console.log("Entrando desde searchController a searchObjects...");
+           // window.console.log("Entrando desde searchController a searchObjects...");
            objectsService.searchObjects($scope.object).then(function(searchResults) {
                $scope.results = objectsService.getSearchResults();
            }); 

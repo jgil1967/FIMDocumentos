@@ -15,6 +15,6 @@ public interface DocumentInterface {
      DocumentDTO getDocument(DocumentDTO dDto);
        ArrayList<DocumentDTO> getDocuments();
        DocumentDTO createDocument(DocumentDTO dDto);
-//       DocumentDTO updateDocument(DocumentDTO dDto);
+     DocumentDTO updateDocument(DocumentDTO dDto);
        ArrayList <DocumentDTO> searchDocuments (DocumentDTO oDto);
 }

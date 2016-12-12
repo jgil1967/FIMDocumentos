@@ -1,7 +1,8 @@
 app.service('contentsService', function()
 {
        var contents = [
-              {name: "Documentos",url:"documentos"}/*,
+              {name: "Documentos",url:"documentos"},
+              {name: "Búsqueda",url:"busqueda"}/*,
               {name: "Búsqueda",url:"busqueda"}/*,
               {name: "Tablas",url:"tablas"},
               {name: "Servidores",url:"servidores"}*/

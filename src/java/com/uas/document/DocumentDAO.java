@@ -8,9 +8,13 @@ package com.uas.document;
 import com.uas.dbutil.getTomcatDataSource;
 import com.uas.keyword.KeywordFacade;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 /**
  *
@@ -36,7 +40,7 @@ KeywordFacade kFac = null;
        documents = new ArrayList<DocumentDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"id\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"idArea\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\"";
+               String SQL = "SELECT \"object\".\"id\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"idArea\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" order by \"object\".\"createdOn\" asc";
                ps = c.prepareStatement(SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
@@ -49,6 +53,15 @@ KeywordFacade kFac = null;
                         document.setKind(rs.getString("kind"));
                         document.setFilename(rs.getString("filename"));
                         document.setKeywords(kFac.getKeywordsByDocument(document));
+                    document.setFileDate(rs.getString("fileDate"));
+                  //  document.setFileDateDate(rs.getDate("fileDate"));
+//                        String pattern = "yyyy-MM-dd hh:mm:ss";
+//SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+//Date parse = sdf.parse(rs.getDate("fileDate"));
+                        //document.setFileDateDate(rs.getDate("fileDate"));
+                        
+                        
+                       // System.out.println(document.toString());
                       documents.add(document);
                    }
          }
@@ -83,11 +96,16 @@ KeywordFacade kFac = null;
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
         c = gd.getTomcatDataSource().getConnection();
-          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\") VALUES (?,?)";
+          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\",\"fileDate\") VALUES (?,?,?)";
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, dDto.getId());
             preparedStmt.setString(2, dDto.getFilename());
-             preparedStmt.executeUpdate();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            preparedStmt.setTimestamp(3, timestamp);
+            
+          preparedStmt.executeUpdate();
              
          
          }
@@ -168,5 +186,49 @@ KeywordFacade kFac = null;
              }
          }
         return documents;}
+
+    @Override
+    public DocumentDTO updateDocument(DocumentDTO dDto) {
+    DocumentDTO objectDto = null;
+              getTomcatDataSource gd = new getTomcatDataSource(); 
+     // getTomcatDataSource gd = new getTomcatDataSource();
+        ResultSet rs = null;
+        Connection c = null;
+        PreparedStatement preparedStmt = null;
+     
+         try{
+               c = gd.getTomcatDataSource().getConnection();
+               String SQL = "update \"public\".\"document\" set \"fileDate\"=? where \"id\"=? ";
+                preparedStmt = c.prepareStatement(SQL);
+          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            preparedStmt.setTimestamp(1, timestamp);
+            preparedStmt.setInt(2, dDto.getId());
+            
+                preparedStmt.executeUpdate();
+              
+    }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+         finally{
+             try{
+                 if (rs != null){
+                     rs.close();
+                 }
+                  if (c != null){
+                     c.close();
+                 }
+                   if (preparedStmt != null){
+                     preparedStmt.close();
+                 }
+             }
+             catch (Exception e2){
+                 e2.printStackTrace();
+             }
+         
+         }
+         return dDto; }
     
 }

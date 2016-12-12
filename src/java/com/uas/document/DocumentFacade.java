@@ -41,5 +41,10 @@ dDao = new DocumentDAO ();
     public ArrayList<DocumentDTO> searchDocuments(DocumentDTO oDto) {
    return dDao.searchDocuments (oDto);
     }
+
+    @Override
+    public DocumentDTO updateDocument(DocumentDTO dDto) {
+        return dDao.updateDocument(dDto);
+    }
     
 }

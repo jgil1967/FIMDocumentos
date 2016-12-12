@@ -8,6 +8,8 @@ package sample.hello.resources;
 import com.uas.dbutil.getTomcatDataSource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+import com.uas.dates.DatesDTO;
+import com.uas.dates.DatesFacade;
 import com.uas.document.DocumentDTO;
 import com.uas.document.DocumentFacade;
 import com.uas.documentKeywordRelationship.documentKeywordRelationshipDTO;
@@ -46,6 +48,9 @@ import javax.ws.rs.core.StreamingOutput;
 public class apiUas {
             DocumentFacade dFac = null;
     ObjectFacade oFac = null;
+    
+    DatesFacade datFac= null;
+    
     KeywordFacade kFac = null;
     documentKeywordRelationshipFacade documentKeywordRelationshipFacade = null;
     //es por la librería de JSON
@@ -66,6 +71,14 @@ public class apiUas {
              return kFac.getKeywords();
                 }
                 
+                
+                 @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getDatesDTO")
+              public  DatesDTO getDatesDTO (){
+                    datFac = new DatesFacade();
+                    return datFac.getDatesDTO();
+                }
                   @GET
 		 @Produces(MediaType.APPLICATION_JSON)
                  @Path("/pow")
@@ -84,11 +97,12 @@ public class apiUas {
     @Path("/createDocument")
     public DocumentDTO createDocument(DocumentDTO dDto) throws Exception
     {
-        System.out.println("dDto : "+ dDto.toString());
-       oFac = new ObjectFacade();
+       // System.out.println("dDto : "+ dDto.toString());
+      oFac = new ObjectFacade();
        dDto.setId(oFac.createObject(dDto).getId()); 
        dFac = new DocumentFacade();
        return  dFac.createDocument(dDto);
+     //  return null;
     }
     
             @POST
@@ -100,8 +114,8 @@ public class apiUas {
         
        oFac = new ObjectFacade();
        oFac.updateObject(dDto);
-       
-       return  dDto;
+       dFac = new DocumentFacade();
+       return  dFac.updateDocument(dDto);
     }
           @POST
     @Consumes({MediaType.APPLICATION_JSON})
@@ -109,7 +123,7 @@ public class apiUas {
     @Path("/searchDocuments")
     public ArrayList<DocumentDTO> searchDocuments(DocumentDTO dDto) throws Exception
     {
-      System.out.println("Hello: " + dDto.getQuery());
+     // System.out.println("Hello: " + dDto.getQuery());
        dFac = new DocumentFacade();
        return  dFac.searchDocuments(dDto);
     }

@@ -1,5 +1,25 @@
 <div class="col s12 m12" ng-controller="documentosController" >
-
+    <label>Búsqueda: <input  ng-model="searchDocumentos"></label>
+  <table>
+      <tr>
+        <tr>
+            <td colspan="4">Fecha de subido</td>
+            <td colspan="4">Fecha de documento</td>
+            </tr>
+        <td>Fecha inicial subido</td>
+        <td><input type="date" name="S_Date" ng-model="startDate" ng-min="startDate" min="startDate"/></td>
+        <td>Fecha final subido</td>
+        <td><input type="date" name="E_Date" ng-model="endDate" ng-max="endDate"  max="endDate"/></td>
+         <td>Fecha inicial</td>
+        <td><input type="date" name="S_Date" ng-model="startFileDate" ng-min="startFileDate" min="startFileDate"/></td>
+        <td>Fecha final</td>
+        <td><input type="date" name="E_Date" ng-model="endFileDate" ng-max="endFileDate"  max="endFileDate"/></td>
+       
+        </tr>
+        
+      </table>
+    
+   
     <md-toolbar class="md-table-toolbar md-default" ng-show="!options.rowSelection || !selected.length">
   <div class="md-toolbar-tools">
  <span>Documentos</span> 
@@ -10,6 +30,7 @@
       <md-icon>add</md-icon>
     </md-button>
   </div>
+        
 </md-toolbar>
 <!--{{tables}} -->
 <md-table-container>
@@ -19,16 +40,18 @@
       <tr md-row>
         <th md-column md:order:by="name"><span>Nombre</span></th>
         <th md-column md:order:by="description"><span>Descripción</span></th>
-        <th md-column md:order:by="createdOn"><span>Fecha de creación</span></th>
+        
+        <th md-column md:order:by="createdOn"><span>Subido</span></th>
         <th md-column ><span>Editar</span></th>
         <th md-column ><span>Descarga</span></th>
         
       </tr>
     </thead>
     <tbody md-body>
-      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in documents | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
+      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in documents| filter:searchDocumentos | filter: fileDateRangeFilter('fileDate', startDate, endDate)  | filter: dateRangeFilter('createdOn', startDate, endDate)| orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
      <td md-cell>{{ document.name| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
      <td md-cell>{{document.description}}</td>
+     
      <td md-cell>{{document.createdOn | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
      <td md-cell>    
            <md-button ng-click="updateDocument($event,document)" class="md-fab md-primary" aria-label="Editar">

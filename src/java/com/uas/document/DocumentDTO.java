@@ -9,6 +9,8 @@ import com.uas.keyword.KeywordDTO;
 import com.uas.object.ObjectDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,6 +21,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DocumentDTO extends ObjectDTO implements Serializable {
     String filename;
     ArrayList <KeywordDTO> keywords;
+    String fileDate;
+    Date fileDateDate;
+
+    public Date getFileDateDate() {
+        return fileDateDate;
+    }
+
+    public void setFileDateDate(Date fileDateDate) {
+        this.fileDateDate = fileDateDate;
+    }
+
+    public String getFileDate() {
+        return fileDate;
+    }
+
+    public void setFileDate(String fileDate) {
+        this.fileDate = fileDate;
+    }
+
 
 
     public String getFilename() {
@@ -36,5 +57,12 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
     public void setKeywords(ArrayList<KeywordDTO> keywords) {
         this.keywords = keywords;
     }
+
+    @Override
+    public String toString() {
+        return "DocumentDTO{" + "filename=" + filename + ", keywords=" + keywords + ", fileDate=" + fileDate + ", fileDateDate=" + fileDateDate + '}';
+    }
+
+   
      
 }

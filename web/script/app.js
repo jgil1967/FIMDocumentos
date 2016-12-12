@@ -25,6 +25,11 @@ app.config(function($routeProvider) {
                 controllerAs: 'ctrl',
                 controller  : 'documentosController'
             })
+             .when('/busqueda', {
+                templateUrl : '/FIMDocumentos/pages/busqueda.html',
+                controllerAs: 'ctrl',
+                controller  : 'searchController'
+            })
              .when('/documentos/:id', {
                 templateUrl : '/FIMDocumentos/pages/documento.html',
                 controller  : 'documentoController'

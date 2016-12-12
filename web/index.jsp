@@ -29,6 +29,7 @@
     <script src="js/materialize.min.js" type="text/javascript"></script>
     <script src="js/init.js"></script>
       <script src="script/shared/angular.min.js" type="text/javascript"></script>
+      <script src="script/shared/moment.js" type="text/javascript"></script>
     <script src="script/ng-tags-input.min/ng-tags-input.min.js" type="text/javascript"></script>
       <script src="script/shared/angular-route.min.js" type="text/javascript"></script>
        <script src="script/shared/angular-animate.min.js" type="text/javascript"></script>
@@ -112,7 +113,13 @@
         <textarea  id="description" ng-model="document.description"   class="materialize-textarea" class="validate" required></textarea>
 
         </div>
+<!--document.fileDateDate -->
+  <div class="input-field col ">
+        <label  ng-if="!update" for="date"></label>
+        <input required  id="date" ng-model="document.fileDate" type="date" class="validate">
 
+        </div>
+<!-------------------------------------------->
  <br>
  <p><strong>Palabras clave</strong></p>
  <tags-input ng-model="tags" 
@@ -184,7 +191,7 @@
                   <!--------------------------------------------------------------------------------------->    
  <md-input-container class="md-icon-float md-block">
       <!-- Use floating label instead of placeholder -->
-      <input placeholder="Búsqueda" ng-model="dDto.query" type="text">
+<!--      <input placeholder="Búsqueda" ng-model="dDto.query" type="text">-->
     </md-input-container>
               <!--------------------------------------------------------------------------------------->
            
