@@ -46,4 +46,9 @@ String oldestCreatedOn,newestCreatedOn,oldestFileDate,newestFileDate;
         this.newestFileDate = newestFileDate;
     }
 
+    @Override
+    public String toString() {
+        return "DatesDTO{" + "oldestCreatedOn=" + oldestCreatedOn + ", newestCreatedOn=" + newestCreatedOn + ", oldestFileDate=" + oldestFileDate + ", newestFileDate=" + newestFileDate + '}';
+    }
+
 }

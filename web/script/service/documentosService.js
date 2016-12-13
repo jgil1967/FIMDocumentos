@@ -15,6 +15,17 @@ app.service('documentosService',function($http){
       });
       return promise;
     },
+      getDocumentsFilters: function(filters) {
+            window.console.log("Filters: " + JSON.stringify(filters));
+ return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/getDocumentsFilters",
+    data: JSON.stringify(filters)
+}).then(function(result){
+    
+            return result.data;
+            
+        });  },
      getDatesDTO: function() {
       var promise = $http.get('/FIMDocumentos/FIMRest/hello/getDatesDTO').then(function (response) {
       dates = response.data;

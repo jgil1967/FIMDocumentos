@@ -17,5 +17,11 @@ public class KeywordDTO extends ObjectDTO implements Serializable {
     public KeywordDTO() {
         this.setKind("keyword");
     }
+
+    @Override
+    public String toString() {
+        return "KeywordDTO{" + '}';
+    }
+    
      
 }

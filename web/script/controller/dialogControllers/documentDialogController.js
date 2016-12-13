@@ -158,6 +158,7 @@ $scope.document  = document;
             headers: {'Content-Type': undefined}
         })
         .success(function(){
+                            
              documentosService.createDocument($scope.document).then(function (data) {
                             $mdDialog.hide();
                             $scope.document = data;

@@ -5,6 +5,7 @@
  */
 package com.uas.document;
 
+import com.uas.dates.filters.filtersDTO.FiltersDTO;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +46,11 @@ dDao = new DocumentDAO ();
     @Override
     public DocumentDTO updateDocument(DocumentDTO dDto) {
         return dDao.updateDocument(dDto);
+    }
+
+    @Override
+    public ArrayList<DocumentDTO> getDocuments(FiltersDTO dto) {
+   return dDao.getDocuments(dto);
     }
     
 }

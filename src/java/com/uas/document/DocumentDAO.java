@@ -5,6 +5,7 @@
  */
 package com.uas.document;
 
+import com.uas.dates.filters.filtersDTO.FiltersDTO;
 import com.uas.dbutil.getTomcatDataSource;
 import com.uas.keyword.KeywordFacade;
 import java.sql.Connection;
@@ -230,5 +231,10 @@ KeywordFacade kFac = null;
          
          }
          return dDto; }
+
+    @Override
+    public ArrayList<DocumentDTO> getDocuments(FiltersDTO dto) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

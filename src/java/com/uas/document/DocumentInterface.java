@@ -5,6 +5,7 @@
  */
 package com.uas.document;
 
+import com.uas.dates.filters.filtersDTO.FiltersDTO;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public interface DocumentInterface {
      DocumentDTO getDocument(DocumentDTO dDto);
        ArrayList<DocumentDTO> getDocuments();
+       ArrayList<DocumentDTO> getDocuments(FiltersDTO dto);
        DocumentDTO createDocument(DocumentDTO dDto);
      DocumentDTO updateDocument(DocumentDTO dDto);
        ArrayList <DocumentDTO> searchDocuments (DocumentDTO oDto);
