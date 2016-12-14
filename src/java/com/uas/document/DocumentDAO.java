@@ -233,8 +233,136 @@ KeywordFacade kFac = null;
          return dDto; }
 
     @Override
-    public ArrayList<DocumentDTO> getDocuments(FiltersDTO dto) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<DocumentDTO> getDocuments(FiltersDTO filters) {
+     PreparedStatement ps = null;
+             Connection c = null;
+        ResultSet rs =null;
+        ArrayList<DocumentDTO> documents = null;
+        getTomcatDataSource gd = new getTomcatDataSource();
+        try{
+             
+       //System.out.println("Keywords : "+ filters.getKeywords().size());
+        //System.out.println(filters.toString());
+        //System.out.println("QUery : " + filters.getFilterQuery());
+        String SQL = "";
+        
+        
+//        if (filters.getKeywords().size()>0){
+//            System.out.println("Hay keywords");
+//            SQL += "SELECT DISTINCT ON( \"documentKeywordRelationship\".\"idDocument\") \"documentKeywordRelationship\".\"idDocument\", \"object\".\"name\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name_0\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\", \"object2\".\"color\", \"object2\".\"kind\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" ";
+//        }
+        
+          if (filters.getKeywords().size()>0 || !filters.getFilterQuery().equals("") ||filters.getDates().getOldestCreatedOn() != null || filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
+               SQL += "SELECT DISTINCT ON( \"documentKeywordRelationship\".\"idDocument\") \"documentKeywordRelationship\".\"idDocument\", \"object\".\"name\"  as \"keywordName\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\", \"object2\".\"color\", \"object2\".\"kind\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" ";
+        
+              SQL +=" where ";
+          }
+          
+          for (int i = 0;i<filters.getKeywords().size();i++){
+              SQL = SQL + "\"documentKeywordRelationship\".\"idKeyword\" = "+filters.getKeywords().get(i).getId()+" ";
+            
+             if (i<filters.getKeywords().size()-1){
+                  SQL = SQL + " OR ";
+              }
+          }
+
+          
+ if (filters.getKeywords().size()>0 && (!filters.getFilterQuery().equals("") || filters.getDates().getOldestCreatedOn()!=null||filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null)){
+                SQL =SQL + "AND";
+            }
+ if (filters.getDates().getOldestCreatedOn() != null){
+             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getOldestCreatedOn().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            System.out.println("1 " + timestamp);
+            SQL =SQL + " \"object\".\"createdOn\" >=  \'"+timestamp+"\' ";
+            if (filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
+                SQL =SQL + " AND ";
+            }
+        }
+        if (filters.getDates().getNewestCreatedOn() != null){
+             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getNewestCreatedOn().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+             
+            System.out.println("2  " + timestamp);
+            SQL =SQL +" \"object\".\"createdOn\" <= \'"+timestamp+"\' ";
+             if ( filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
+                SQL =SQL + " AND ";
+            }
+        }
+       
+        if (filters.getDates().getOldestFileDate()!= null){
+             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getOldestFileDate().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+             
+            System.out.println("3 " + timestamp);
+            SQL =SQL +" \"document\".\"fileDate\" >=  \'"+timestamp+"\' ";
+             if (  filters.getDates().getNewestFileDate() != null){
+                SQL =SQL + " AND ";
+            }
+        }
+        if (filters.getDates().getNewestFileDate() != null){
+             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getNewestFileDate().substring(0,10));
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+             
+            System.out.println("4 " + timestamp);
+            SQL =SQL +" \"document\".\"fileDate\" <=  \'"+timestamp+"\' ";
+        }
+        
+       System.out.println("SQL : " + SQL);
+        if (!SQL.equals("")){
+        
+        DocumentDTO document = null;
+            c = gd.getTomcatDataSource().getConnection();
+        ps = c.prepareStatement(SQL);
+        rs = ps.executeQuery();
+        kFac = new KeywordFacade ();
+        documents = new ArrayList<DocumentDTO> ();
+         while (rs.next()) {
+                       document = new DocumentDTO();
+                       document.setId(rs.getInt("id"));
+                       document.setName(rs.getString("name"));
+                       document.setDescription(rs.getString("description"));
+                        document.setColor(rs.getString("color"));
+                        document.setCreatedOn(rs.getTimestamp("createdOn"));
+                        document.setKind(rs.getString("kind"));
+                        document.setFilename(rs.getString("filename"));
+                        document.setFileDate(rs.getString("fileDate"));
+                        document.setKeywords(kFac.getKeywordsByDocument(document));
+                      documents.add(document);
+                   }
+        }
+        else{
+           // System.out.println("regresando getDocuments");
+            return getDocuments();
+        }
+      
+     
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+         finally{
+             try{
+                 if (rs != null){
+                     rs.close();
+                 }
+                  if (c != null){
+                     c.close();
+                 }
+                   if (ps != null){
+                     ps.close();
+                 }
+             }
+             catch (Exception e2){
+                 e2.printStackTrace();
+             }
+         }
+        
+        return documents;
     }
     
 }

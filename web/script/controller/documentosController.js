@@ -120,31 +120,13 @@ $scope.search = function ($event){
                         filterQuery: $scope.searchDocumentos
                     }
                 documentosService.getDocumentsFilters(filters).then(function() {
-                
+                $scope.documents = documentosService.getList();
             });
             }
             
 }
  $scope.$watchGroup(['startDate', 'endDate', 'startFileDate', 'endFileDate'], function(newValues, oldValues, scope) {
- 
-//            if (new Date(newValues[0]) != "Invalid Date" || new Date(newValues[1]) != "Invalid Date" ||new Date(newValues[2]) != "Invalid Date" ||new Date(newValues[3]) != "Invalid Date" )
-//            {
-//                  var dates2 = {
-//                oldestCreatedOn: newValues[0],
-//                newestCreatedOn: newValues[1],
-//                oldestFileDate: newValues[2],
-//                newestFileDate: newValues[3]
-//                    } 
-//                    var filters = {
-//                        dates:dates2,
-//                        keywords:$scope.tags 
-//                    }
-//                documentosService.getDocumentsFilters(filters).then(function() {
-//                
-//            });
-//            }
-//            
-            
+           
   
 },true);
 

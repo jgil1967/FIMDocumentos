@@ -3,8 +3,11 @@
     <h2 class="md-toolbar-tools">
       <span>Filtros de búsqueda</span>
     </h2>
+        <label style="border-bottom: white; color: white">
+          <input placeholder="Búsqueda" style="width: 100%;     border-bottom: 1px solid #fffdfd;"  ng-model="searchDocumentos">
+      </label>
   </md-toolbar>
-    <label>Búsqueda: <input  ng-model="searchDocumentos"></label>
+    
    <tags-input ng-model="tags" 
                 display-property="name" 
                 placeholder="Palabras clave" 
@@ -20,7 +23,7 @@
     <table>
       <tr>
         <tr>
-            <td colspan="2">Fecha de subido</td>
+            <td colspan="2">Fecha de registro</td>
             <td colspan="2">Fecha de documento</td>
             </tr>
 <!--        <td>Fecha inicial subido</td>-->
@@ -51,12 +54,14 @@
     </md-button>
   </div>-->
         
-         <md-toolbar class="md-theme-light">
+         <md-toolbar class="md-theme-light" >
     <h2 class="md-toolbar-tools">
       <span>Documentos</span>
-      <md-button class="md-icon-button" ng-click="createDocument($event)">
-      <md-icon>add</md-icon>
+      <md-button style="color: white;" class="md-icon-button" ng-click="createDocument($event)">
+     
+          <md-icon>add</md-icon>
     </md-button>
+      
     </h2>
              
   </md-toolbar>

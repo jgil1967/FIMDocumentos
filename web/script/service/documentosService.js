@@ -23,7 +23,7 @@ app.service('documentosService',function($http){
     data: JSON.stringify(filters)
 }).then(function(result){
     
-            return result.data;
+          documents = result.data;
             
         });  },
      getDatesDTO: function() {

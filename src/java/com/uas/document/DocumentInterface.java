@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public interface DocumentInterface {
      DocumentDTO getDocument(DocumentDTO dDto);
        ArrayList<DocumentDTO> getDocuments();
-       ArrayList<DocumentDTO> getDocuments(FiltersDTO dto);
+       ArrayList<DocumentDTO> getDocuments(FiltersDTO filters);
        DocumentDTO createDocument(DocumentDTO dDto);
      DocumentDTO updateDocument(DocumentDTO dDto);
        ArrayList <DocumentDTO> searchDocuments (DocumentDTO oDto);

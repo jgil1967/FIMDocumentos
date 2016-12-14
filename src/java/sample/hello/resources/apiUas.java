@@ -102,85 +102,9 @@ public class apiUas {
     @Path("/getDocumentsFilters")
     public ArrayList<DocumentDTO> getDocumentsFilters(FiltersDTO filters) throws Exception
     {
-       System.out.println("Keywords : "+ filters.getKeywords().size());
-        System.out.println(filters.toString());
-        System.out.println("QUery : " + filters.getFilterQuery());
-        String SQL = "";
-        
-        
-        if (filters.getKeywords().size()>0){
-            System.out.println("Hay keywords");
-            SQL += "SELECT DISTINCT ON( \"documentKeywordRelationship\".\"idDocument\") \"documentKeywordRelationship\".\"idDocument\", \"object\".\"name\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name_0\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\", \"object2\".\"color\", \"object2\".\"kind\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" ";
-        }
-        
-          if (filters.getKeywords().size()>0 || !filters.getFilterQuery().equals("") ||filters.getDates().getOldestCreatedOn() != null || filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-              SQL +=" where ";
-          }
-          
-          for (int i = 0;i<filters.getKeywords().size();i++){
-              SQL = SQL + "\"documentKeywordRelationship\".\"idKeyword\" = ? ";
-              if (i<filters.getKeywords().size()-1){
-                  SQL = SQL + " OR ";
-              }
-          }
-
-          
- if (!filters.getFilterQuery().equals("") || filters.getDates().getOldestCreatedOn()!=null||filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-                SQL =SQL + "AND";
-            }
-
-          if (!filters.getFilterQuery().equals("")){
-              SQL=SQL + " \"object\".\"name\" ILIKE ? or \"object\".\"description\" ILIKE ?";
-           if (filters.getDates().getOldestCreatedOn()!=null||filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-                SQL =SQL + " AND ";
-            }
-          }
-          // \"object\".\"name\" ILIKE ? or \"object\".\"description\" ILIKE ?
-         if (filters.getDates().getOldestCreatedOn() != null){
-             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getOldestCreatedOn().substring(0,10));
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-            System.out.println("1 " + timestamp);
-            SQL =SQL + " \"object\".\"createdOn\" >= ? ";
-            if (filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-                SQL =SQL + " AND ";
-            }
-        }
-        if (filters.getDates().getNewestCreatedOn() != null){
-             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getNewestCreatedOn().substring(0,10));
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-             
-            System.out.println("2  " + timestamp);
-            SQL =SQL +" \"object\".\"createdOn\" <= ? ";
-             if ( filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-                SQL =SQL + " AND ";
-            }
-        }
-       
-        if (filters.getDates().getOldestFileDate()!= null){
-             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getOldestFileDate().substring(0,10));
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-             
-            System.out.println("3 " + timestamp);
-            SQL =SQL +" \"document\".\"fileDate\" >= ? ";
-             if (  filters.getDates().getNewestFileDate() != null){
-                SQL =SQL + " AND ";
-            }
-        }
-        if (filters.getDates().getNewestFileDate() != null){
-             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsedDate = dateFormat.parse(filters.getDates().getNewestFileDate().substring(0,10));
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-             
-            System.out.println("4 " + timestamp);
-            SQL =SQL +" \"document\".\"fileDate\" <= ? ";
-        }
-        
-        System.out.println("SQL : " + SQL);
-        return null;
-     //  return null;
+       dFac= new DocumentFacade();
+        return dFac.getDocuments(filters);
+     
     }
                 
               @POST

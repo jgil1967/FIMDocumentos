@@ -115,7 +115,7 @@
         </div>
 <!--document.fileDateDate -->
   <div class="input-field col ">
-        <label  ng-if="!update" for="date"></label>
+        <p>Fecha del documento</p>
         <input required  id="date" ng-model="document.fileDate" type="date" class="validate">
 
         </div>
