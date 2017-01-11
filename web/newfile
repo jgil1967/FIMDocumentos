@@ -1,0 +1,2 @@
+
+SELECT "object"."id", "object"."name", "object"."description", "object"."createdOn", "object"."createdBy", "object"."color", "object"."kind", "document"."fileName", "document"."fileDate", "document"."idArea" FROM "document" JOIN "object" ON "document"."id" = "object"."id" order by "object"."createdOn" asc

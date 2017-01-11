@@ -1,13 +1,42 @@
 <div class="col s12 m12" ng-controller="documentosController" >
-    <md-toolbar class="md-theme-light">
+     <md-toolbar class="md-theme-light" >
     <h2 class="md-toolbar-tools">
-      <span>Filtros de búsqueda</span>
+      <span>Documentos</span>
+      <md-button style="color: white;" class="md-icon-button" ng-click="createDocument($event)">
+     
+          <md-icon>add</md-icon>
+    </md-button>
+      
     </h2>
-        <label style="border-bottom: white; color: white">
-          <input placeholder="Búsqueda" style="width: 100%;     border-bottom: 1px solid #fffdfd;"  ng-model="searchDocumentos">
-      </label>
+             
   </md-toolbar>
+        
+   
+      <label style="border-bottom: black;">
+          <input autofocus placeholder="Búsqueda" style="width: 100%;     border-bottom: 1px solid #fffdfd;"  ng-model="searchDocumentos">
+      </label>
     
+      <md-input-container>
+        <label>Areas</label>
+        
+        <md-select ng-model="selectedAreas" multiple>
+          <md-optgroup label="Areas">
+            <md-option ng-value="area.id" ng-repeat="area in areas ">{{area.name}}</md-option>
+          </md-optgroup>
+        </md-select>
+        
+      </md-input-container>
+
+    <md-input-container>
+        <label>Usuarios</label>
+        
+        <md-select ng-model="selectedUsuarios" multiple>
+          <md-optgroup label="Usuarios">
+            <md-option ng-value="usuario.id" ng-repeat="usuario in usuarios ">{{usuario.name}}</md-option>
+          </md-optgroup>
+        </md-select>
+        
+      </md-input-container>
    <tags-input ng-model="tags" 
                 display-property="name" 
                 placeholder="Palabras clave" 
@@ -42,32 +71,7 @@
     <md-button class="md-primary md-raised" ng-click="search($event)">
         Buscar
     </md-button>
-    <md-toolbar class="md-table-toolbar md-default" ng-show="!options.rowSelection || !selected.length">
-<!--  <div class="md-toolbar-tools">
-        
- <span>Documentos</span> 
-
-    <span flex></span>
-      
-   <md-button class="md-icon-button" ng-click="createDocument($event)">
-      <md-icon>add</md-icon>
-    </md-button>
-  </div>-->
-        
-         <md-toolbar class="md-theme-light" >
-    <h2 class="md-toolbar-tools">
-      <span>Documentos</span>
-      <md-button style="color: white;" class="md-icon-button" ng-click="createDocument($event)">
-     
-          <md-icon>add</md-icon>
-    </md-button>
-      
-    </h2>
-             
-  </md-toolbar>
-        
-        
-</md-toolbar>
+  
 <!--{{tables}} -->
 <md-table-container>
   <table data-md-table data-md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" data-ng-model="selected" md-progress="promise">
@@ -78,17 +82,21 @@
         <th md-column md:order:by="description"><span>Descripción</span></th>
         
         <th md-column md:order:by="createdOn"><span>Subido</span></th>
+        <th md-column md:order:by="area.name"><span>Area</span></th>
+        <th md-column md:order:by="user.name"><span>Creado por</span></th>
         <th md-column ><span>Editar</span></th>
         <th md-column ><span>Descarga</span></th>
         
       </tr>
     </thead>
     <tbody md-body>
-      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in documents| filter:searchDocumentos | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
+      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in  filteredDocuments()  | filter:searchDocumentos | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
      <td md-cell>{{ document.name| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
      <td md-cell>{{document.description}}</td>
      
      <td md-cell>{{document.createdOn | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
+     <td md-cell>{{document.area.name}}</td>
+     <td md-cell>{{document.user.name}}</td>
      <td md-cell>    
            <md-button ng-click="updateDocument($event,document)" class="md-fab md-primary" aria-label="Editar">
        <i class="material-icons">border_color</i>

@@ -2,6 +2,9 @@ app.service('contentsService', function()
 {
        var contents = [
               {name: "Documentos",url:"documentos"},
+              {name: "Areas",url:"areas"},
+              {name: "Usuarios",url:"usuarios"},
+              
 //              {name: "Búsqueda",url:"busqueda"}/*,
   //            {name: "Búsqueda",url:"busqueda"}/*,
     //          {name: "Tablas",url:"tablas"},

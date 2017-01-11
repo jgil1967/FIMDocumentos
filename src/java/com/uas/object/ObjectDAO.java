@@ -26,12 +26,13 @@ public class ObjectDAO implements ObjectInterface {
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
         c = gd.getTomcatDataSource().getConnection();
-          String SQL = "INSERT INTO \"public\".\"object\" (\"name\", \"description\", \"color\", \"kind\") VALUES (?, ?, ?,?) returning id;";
+          String SQL = "INSERT INTO \"public\".\"object\" (\"name\", \"description\", \"color\", \"kind\", \"createdBy\") VALUES (?, ?, ?,?,?) returning id;";
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setString(1, oDto.getName());
             preparedStmt.setString(2, oDto.getDescription());
             preparedStmt.setString(3, oDto.getColor());
             preparedStmt.setString(4, oDto.getKind());
+            preparedStmt.setInt(5, oDto.getCreatedBy());
              rs =  preparedStmt.executeQuery();
               while (rs.next()) {
                   oDto.setId(rs.getInt("id"));

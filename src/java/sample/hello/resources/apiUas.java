@@ -8,6 +8,10 @@ package sample.hello.resources;
 import com.uas.dbutil.getTomcatDataSource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+import com.uas.areaRelationships.areaRelationshipsDTO;
+import com.uas.areaRelationships.areaRelationshipsFacade;
+import com.uas.areas.areaDTO;
+import com.uas.areas.areaFacade;
 import com.uas.dates.DatesDTO;
 import com.uas.dates.DatesFacade;
 import com.uas.dates.filters.filtersDTO.FiltersDTO;
@@ -19,6 +23,8 @@ import com.uas.keyword.KeywordDTO;
 import com.uas.keyword.KeywordFacade;
 import com.uas.object.ObjectDTO;
 import com.uas.object.ObjectFacade;
+import com.uas.usuarios.UsuarioDTO;
+import com.uas.usuarios.UsuarioFacade;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,9 +59,29 @@ public class apiUas {
     ObjectFacade oFac = null;
     
     DatesFacade datFac= null;
-    
+   UsuarioFacade uFac  = null;
     KeywordFacade kFac = null;
+    areaFacade aFac = null;
     documentKeywordRelationshipFacade documentKeywordRelationshipFacade = null;
+    areaRelationshipsFacade arFac = null;
+    
+      @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/createAreaRelationship")   
+     public areaRelationshipsDTO createAreaRelationship (areaRelationshipsDTO dto){
+         arFac = new areaRelationshipsFacade();
+         return arFac.createAreaRelationship(dto);
+     }
+       @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/deleteAreaRelationship")   
+    public areaRelationshipsDTO deleteAreaRelationship (areaRelationshipsDTO dto){
+        arFac = new areaRelationshipsFacade();
+        return arFac.deleteAreaRelationship(dto);
+    }
+    
     //es por la librería de JSON
                   @GET
 		 @Produces(MediaType.APPLICATION_JSON)
@@ -64,6 +90,22 @@ public class apiUas {
                 {
             dFac = new DocumentFacade();
              return dFac.getDocuments();
+                }
+                   @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getUsuarios")
+		public ArrayList<UsuarioDTO> getUsuarios() 
+                {
+            uFac = new UsuarioFacade();
+             return uFac.obtenerUsuarios();
+                }
+                   @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getAreas")
+		public ArrayList<areaDTO> getAreas() 
+                {
+            aFac = new areaFacade();
+             return aFac.getAreas();
                 }
                   @GET
 		 @Produces(MediaType.APPLICATION_JSON)
@@ -94,8 +136,28 @@ public class apiUas {
                                 System.out.println("num2: "+ num2);
                 }
     
+               
+              @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/createArea")   
+              public areaDTO createArea (areaDTO dto){
+                   oFac = new ObjectFacade();
+       dto.setId(oFac.createObject(dto).getId()); 
+       aFac = new areaFacade ();
+      return aFac.createArea(dto);
+              }
                 
-                
+              @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+              @Path("/verificaDisponibilidadUsuario")
+              public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception{
+                //  System.out.println("Hello api verificaDisponibilidadUsuario " );
+                  uFac = new UsuarioFacade();
+                  return uFac.verificaDisponibilidadUsuario(dto);
+              }
+              
               @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)
@@ -106,7 +168,28 @@ public class apiUas {
         return dFac.getDocuments(filters);
      
     }
-                
+                                @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/createUsuario")
+    public UsuarioDTO createUsuario(UsuarioDTO dto) throws Exception
+    {
+          oFac = new ObjectFacade();
+       dto.setId(oFac.createObject(dto).getId()); 
+        uFac = new UsuarioFacade();
+       return  uFac.createUsuario(dto);
+    }
+                         @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/updateUsuario")
+    public UsuarioDTO updateUsuario(UsuarioDTO dto) throws Exception
+    {
+          oFac = new ObjectFacade();
+       oFac.updateObject(dto); 
+        uFac = new UsuarioFacade();
+       return  uFac.updateUsuario(dto);
+    }
               @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)

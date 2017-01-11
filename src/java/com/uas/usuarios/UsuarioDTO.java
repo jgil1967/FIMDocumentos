@@ -14,10 +14,46 @@ import java.io.Serializable;
  * @author jonathangil
  */
 public class UsuarioDTO extends ObjectDTO implements Serializable {
-    int idCarrera;
-    String contrasena;
-    boolean verified;
+    
+   public String contrasena,contrasenaVerify;
+   public  Boolean verified, isAdministrator,enabled,availability;
+public int idArea;
 
+    public UsuarioDTO() {
+       isAdministrator = false;
+       verified = false;
+       enabled = false;
+       availability = true;
+    }
+
+    public int getIdArea() {
+        return idArea;
+    }
+
+    public void setIdArea(int idArea) {
+        this.idArea = idArea;
+    }
+
+   
+    public Boolean getIsAdministrator() {
+        return isAdministrator;
+    }
+
+    public void setIsAdministrator(Boolean isAdministrator) {
+        this.isAdministrator = isAdministrator;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+  
+    
+    
     public String getContrasena() {
         return contrasena;
     }
@@ -34,16 +70,7 @@ public class UsuarioDTO extends ObjectDTO implements Serializable {
         this.verified = verified;
     }
     
-    
-   
-
-    public int getIdCarrera() {
-        return idCarrera;
-    }
-
-    public void setIdCarrera(int idCarrera) {
-        this.idCarrera = idCarrera;
-    }
+ 
 
     public String getcontrasena() {
         return contrasena;
@@ -53,6 +80,31 @@ public class UsuarioDTO extends ObjectDTO implements Serializable {
         this.contrasena = contrasena;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Boolean availability) {
+        this.availability = availability;
+    }
+
+    public String getContrasenaVerify() {
+        return contrasenaVerify;
+    }
+
+    public void setContrasenaVerify(String contrasenaVerify) {
+        this.contrasenaVerify = contrasenaVerify;
+    }
+
+   
   
     
             

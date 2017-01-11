@@ -5,6 +5,8 @@
  */
 package com.uas.usuarios;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jonathangil
@@ -22,6 +24,20 @@ UsuarioInterface uDao = null;
     @Override
     public UsuarioDTO iniciarSesion(UsuarioDTO dto) throws Exception {
         return uDao.iniciarSesion(dto);
+    }
+
+    @Override
+    public ArrayList<UsuarioDTO> obtenerUsuarios() {
+   return uDao.obtenerUsuarios();}
+
+    @Override
+    public UsuarioDTO updateUsuario(UsuarioDTO oDto) {
+     return uDao.updateUsuario(oDto);
+    }
+
+    @Override
+    public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception {
+       return uDao.verificaDisponibilidadUsuario(dto);
     }
     
 }

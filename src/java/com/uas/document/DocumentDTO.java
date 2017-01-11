@@ -5,8 +5,10 @@
  */
 package com.uas.document;
 
+import com.uas.areas.areaDTO;
 import com.uas.keyword.KeywordDTO;
 import com.uas.object.ObjectDTO;
+import com.uas.usuarios.UsuarioDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +25,25 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
     ArrayList <KeywordDTO> keywords;
     String fileDate;
     Date fileDateDate;
+    int idArea;
+    UsuarioDTO user;
+    areaDTO area;
+
+    public DocumentDTO() {
+        user = new UsuarioDTO();
+        area = new areaDTO();
+        
+    }
+    
+    
+    public int getIdArea() {
+        return idArea;
+    }
+
+    public void setIdArea(int idArea) {
+        this.idArea = idArea;
+    }
+    
 
     public Date getFileDateDate() {
         return fileDateDate;
@@ -61,6 +82,22 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
     @Override
     public String toString() {
         return "DocumentDTO{" + "filename=" + filename + ", keywords=" + keywords + ", fileDate=" + fileDate + ", fileDateDate=" + fileDateDate + '}';
+    }
+
+    public UsuarioDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UsuarioDTO user) {
+        this.user = user;
+    }
+
+    public areaDTO getArea() {
+        return area;
+    }
+
+    public void setArea(areaDTO area) {
+        this.area = area;
     }
 
    

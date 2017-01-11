@@ -5,6 +5,25 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+ <%
+    
+    if(session.getAttribute("user") == null)
+   	 
+    {	//System.out.println(session.getAttribute("user"));
+    	 response.sendRedirect("login.html");
+    	 return;
+    } 
+    
+    else
+    {  
+       
+    }
+String idUsuario =  session.getAttribute("idUsuario").toString(); 
+//String nombreUsuario =  session.getAttribute("user").toString(); 
+//
+//String a =  session.getAttribute("isAdministrator").toString();
+//System.out.println(" Valor isAdministrator : " + a);
+    %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -39,25 +58,37 @@
        <script src="script/shared/dist/md-data-table.min.js" type="text/javascript"></script>
   
       <script src="script/app.js" type="text/javascript"></script>
+      <script src="script/service/areasService.js" type="text/javascript"></script>
       <script src="script/service/contentsService.js" type="text/javascript"></script>
       <script src="script/service/objectsService.js" type="text/javascript"></script>
       <script src="script/service/documentosService.js" type="text/javascript"></script>
       <script src="script/service/topBannerService.js" type="text/javascript"></script>
       <script src="script/service/tagsService.js" type="text/javascript"></script>
       <script src="script/service/documentKeywordRelationshipService.js" type="text/javascript"></script>
+      <script src="script/service/usuariosService.js" type="text/javascript"></script>
+      <script src="script/controller/dialogControllers/usuarioDialogController.js" type="text/javascript"></script>
       <script src="script/controller/appController.js" type="text/javascript"></script>
       <script src="script/controller/controllerSideNavBar.js" type="text/javascript"></script>
       <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/documentosController.js" type="text/javascript"></script>
-      
       <script src="script/controller/searchController.js" type="text/javascript"></script>
     <!--Dialog controllers -->
     <script src="script/controller/dialogControllers/documentDialogController.js" type="text/javascript"></script>
+    <script src="script/controller/usuariosController.js" type="text/javascript"></script>
+    <script src="script/controller/areasController.js" type="text/javascript"></script>
+    <script src="script/controller/dialogControllers/areaDialogController.js" type="text/javascript"></script>
     <!--Dialog controllers -->
     </head>
     <!--gradient wellText-->
     <body class=" " ng-app="appApp">
+        
+        
+        
+        <input type="hidden" value="${idUsuario}" id="idUsuario" name="idUsuario">
+        
         <div ng-controller="documentDialogController"></div>
+        <div ng-controller="usuarioDialogController"></div>
+        <div ng-controller="areaDialogController"></div>
         <div ng-controller="searchController"></div>
    <script type="text/ng-template" id="tag-template">
       <div class="tag-template">
@@ -79,6 +110,125 @@
         </div>
       </div>
     </script>
+     <script type="text/ng-template" id="areaDialog.tmpl.html">
+   <md-dialog aria-label="Area" ng-cloak>
+        <md-toolbar>
+        <div class="md-toolbar-tools">
+        <h2  ng-if="!update">Nueva Area</h2>
+         <h2 ng-if="update">Editar Area</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+        </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+        <div class="md-dialog-content">
+        <form ng-submit="$event.preventDefault()" novalidate name="formArea">
+        <!-------------------------------------------->
+
+        <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input md-autofocus autofocus  required  id="nombre" ng-model="area.name" type="text" class="validate">
+        <label for="nombre">Nombre (campo obligatorio) </label>
+        </div>
+ 
+  
+  </br>
+
+ 
+        </form>
+        </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+        <button ng-if="!update" ng-disabled="formArea.$invalid " class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoArea()">Registrar
+        <i class="material-icons right">send</i>
+        </button>
+        <button ng-if="update" ng-disabled="formArea.$invalid " class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editArea()">Editar
+        <i class="material-icons right">send</i>
+        </button>
+
+        </md-dialog-actions>
+        </md-dialog>
+    </script>
+    
+     <script type="text/ng-template" id="usuarioDialog.tmpl.html">
+   <md-dialog aria-label="Usuario" ng-cloak>
+        <md-toolbar>
+        <div class="md-toolbar-tools">
+        <h2  ng-if="!update">Nuevo Usuario</h2>
+         <h2 ng-if="update">Editar Usuario</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+        </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+          <label  ng-hide="usuario.availability" style="color:red">Ese nombre de usuario ya existe </label>
+        <label ng-show="usuario.availability && usuario.name.length >0 " style="color:green">Nombre de usuario válido y disponible </label>
+        
+        <div class="md-dialog-content">
+        <form ng-submit="$event.preventDefault()" novalidate name="formUsuario">
+        <!-------------------------------------------->
+      
+
+        <div style="clear:both"></div>
+        <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input md-autofocus autofocus  required  id="nombre" ng-model="usuario.name" type="text" class="validate">
+        <label for="nombre">Nombre (campo obligatorio) </label>
+        </div>
+ 
+  
+  </br>
+  <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input  required  id="contrasena" ng-model="usuario.contrasena" type="password" class="validate">
+        <label for="contrasena">Contraseña (campo obligatorio) </label>
+        </div>
+</br>
+  <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input  required  id="contrasenaVerify" ng-model="usuario.contrasenaVerify" type="password" class="validate">
+        <label for="contrasenaVerify">Verificar contraseña (campo obligatorio) </label>
+        </div>
+<br>
+  <md-input-container>
+          <label>Areas</label>
+          <md-select ng-model="usuario.idArea">
+<!--            <md-option><em>None</em></md-option> -->
+            <md-option ng-repeat="area in areas" ng-value="area.id" >
+              {{area.name}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+ <br>
+<!-------------------------------------------->
+<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+         <md-switch ng-model="usuario.isAdministrator" aria-label="Switch 1" > Es administrador
+    </div>
+  </md-switch>
+ <br>
+<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+         <md-switch ng-model="usuario.enabled" aria-label="Switch 1" > Habilitado
+    </div>
+  </md-switch>
+ <br>
+ 
+        </form>
+        </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+        <button ng-if="!update" ng-disabled="formUsuario.$invalid || !usuario.availability  ||  usuario.idArea==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoUsuario()">Registrar
+        <i class="material-icons right">send</i>
+        </button>
+        <button ng-if="update" ng-disabled="formUsuario.$invalid   || !usuario.availability ||  usuario.idArea ==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editUsuario()">Editar
+        <i class="material-icons right">send</i>
+        </button>
+
+        </md-dialog-actions>
+        </md-dialog>
+    </script>
+    
           <script type="text/ng-template" id="documentDialog.tmpl.html">
    <md-dialog aria-label="Documento" ng-cloak>
         <md-toolbar>
@@ -120,6 +270,16 @@
 
         </div>
 <!-------------------------------------------->
+<br>
+  <md-input-container>
+          <label>Areas</label>
+          <md-select ng-model="document.idArea">
+<!--            <md-option><em>None</em></md-option> -->
+            <md-option ng-repeat="area in areas" ng-value="area.id" >
+              {{area.name}}
+            </md-option>
+          </md-select>
+        </md-input-container>
  <br>
  <p><strong>Palabras clave</strong></p>
  <tags-input ng-model="tags" 
@@ -164,10 +324,10 @@
         </div>
         </md-dialog-content>
         <md-dialog-actions>
-        <button ng-if="!update" ng-disabled="formDocument.$invalid" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoDocument()">Registrar
+        <button ng-if="!update" ng-disabled="formDocument.$invalid ||  document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoDocument()">Registrar
         <i class="material-icons right">send</i>
         </button>
-        <button ng-if="update" ng-disabled="formDocument.$invalid" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editDocument()">Editar
+        <button ng-if="update" ng-disabled="formDocument.$invalid || document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editDocument()">Editar
         <i class="material-icons right">send</i>
         </button>
 
@@ -202,6 +362,8 @@
               
         <li class="bold"><a ng-href="#/{{opcion.url}}" class="waves-effect waves-paquetexpress">{{opcion.name}}</a></li>
         </div>
+                   <li class="bold"><a ng-href="http://localhost:8080/FIMDocumentos/UsuarioServlet?task=cerrarsesionhttp" class="waves-effect waves-paquetexpress">Cerrar sesión</a></li>
+           
           </div>
          
 </ul>

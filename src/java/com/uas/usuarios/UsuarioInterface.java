@@ -5,12 +5,16 @@
  */
 package com.uas.usuarios;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jonathangil
  */
 public interface UsuarioInterface {
      UsuarioDTO createUsuario (UsuarioDTO oDto);
+     UsuarioDTO updateUsuario (UsuarioDTO oDto);
+     ArrayList <UsuarioDTO> obtenerUsuarios ();
      public UsuarioDTO iniciarSesion(UsuarioDTO dto) throws Exception;
-     
+     public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception;
 }

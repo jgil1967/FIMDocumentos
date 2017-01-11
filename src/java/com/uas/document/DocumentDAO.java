@@ -41,12 +41,13 @@ KeywordFacade kFac = null;
        documents = new ArrayList<DocumentDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"id\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"idArea\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" order by \"object\".\"createdOn\" asc";
+               String SQL = "SELECT \"object\".\"id\",\"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"idArea\", \"object3\".\"name\" AS \"nameArea\", \"object2\".\"name\" AS \"nameCreatedBy\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" ORDER BY \"object\".\"createdOn\" ASC";
                ps = c.prepareStatement(SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
                        document = new DocumentDTO();
                        document.setId(rs.getInt("id"));
+                       document.setCreatedBy(rs.getInt("createdBy"));
                        document.setName(rs.getString("name"));
                        document.setDescription(rs.getString("description"));
                         document.setColor(rs.getString("color"));
@@ -55,14 +56,9 @@ KeywordFacade kFac = null;
                         document.setFilename(rs.getString("filename"));
                         document.setKeywords(kFac.getKeywordsByDocument(document));
                     document.setFileDate(rs.getString("fileDate"));
-                  //  document.setFileDateDate(rs.getDate("fileDate"));
-//                        String pattern = "yyyy-MM-dd hh:mm:ss";
-//SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-//Date parse = sdf.parse(rs.getDate("fileDate"));
-                        //document.setFileDateDate(rs.getDate("fileDate"));
-                        
-                        
-                       // System.out.println(document.toString());
+               document.setIdArea(rs.getInt("idArea"));
+               document.getArea().setName(rs.getString("nameArea"));
+               document.getUser().setName(rs.getString("nameCreatedBy"));
                       documents.add(document);
                    }
          }
@@ -97,7 +93,7 @@ KeywordFacade kFac = null;
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
         c = gd.getTomcatDataSource().getConnection();
-          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\",\"fileDate\") VALUES (?,?,?)";
+          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\",\"fileDate\",\"idArea\") VALUES (?,?,?,?)";
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, dDto.getId());
             preparedStmt.setString(2, dDto.getFilename());
@@ -105,6 +101,7 @@ KeywordFacade kFac = null;
             java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
             preparedStmt.setTimestamp(3, timestamp);
+            preparedStmt.setInt(4, dDto.getIdArea());
             
           preparedStmt.executeUpdate();
              
@@ -251,8 +248,8 @@ KeywordFacade kFac = null;
 //            System.out.println("Hay keywords");
 //            SQL += "SELECT DISTINCT ON( \"documentKeywordRelationship\".\"idDocument\") \"documentKeywordRelationship\".\"idDocument\", \"object\".\"name\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name_0\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\", \"object2\".\"color\", \"object2\".\"kind\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" ";
 //        }
-        
-          if (filters.getKeywords().size()>0 || !filters.getFilterQuery().equals("") ||filters.getDates().getOldestCreatedOn() != null || filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
+        //|| !filters.getFilterQuery().equals("") 
+          if (filters.getKeywords().size()>0 ||filters.getDates().getOldestCreatedOn() != null || filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
                SQL += "SELECT DISTINCT ON( \"documentKeywordRelationship\".\"idDocument\") \"documentKeywordRelationship\".\"idDocument\", \"object\".\"name\"  as \"keywordName\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\", \"object2\".\"color\", \"object2\".\"kind\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" ";
         
               SQL +=" where ";
@@ -265,9 +262,9 @@ KeywordFacade kFac = null;
                   SQL = SQL + " OR ";
               }
           }
-
+//!filters.getFilterQuery().equals("") || 
           
- if (filters.getKeywords().size()>0 && (!filters.getFilterQuery().equals("") || filters.getDates().getOldestCreatedOn()!=null||filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null)){
+ if (filters.getKeywords().size()>0 && (filters.getDates().getOldestCreatedOn()!=null||filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null)){
                 SQL =SQL + "AND";
             }
  if (filters.getDates().getOldestCreatedOn() != null){
@@ -331,6 +328,7 @@ KeywordFacade kFac = null;
                         document.setKind(rs.getString("kind"));
                         document.setFilename(rs.getString("filename"));
                         document.setFileDate(rs.getString("fileDate"));
+                        document.setIdArea(rs.getInt("idArea"));
                         document.setKeywords(kFac.getKeywordsByDocument(document));
                       documents.add(document);
                    }

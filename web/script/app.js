@@ -25,6 +25,16 @@ app.config(function($routeProvider) {
                 controllerAs: 'ctrl',
                 controller  : 'documentosController'
             })
+              .when('/usuarios', {
+                templateUrl : '/FIMDocumentos/pages/usuarios.html',
+                controllerAs: 'ctrl',
+                controller  : 'usuariosController'
+            })
+            .when('/areas', {
+                templateUrl : '/FIMDocumentos/pages/areas.html',
+                controllerAs: 'ctrl',
+                controller  : 'areasController'
+            })
              .when('/busqueda', {
                 templateUrl : '/FIMDocumentos/pages/busqueda.html',
                 controllerAs: 'ctrl',

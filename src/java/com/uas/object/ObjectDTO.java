@@ -17,8 +17,8 @@ public class ObjectDTO {
         return "ObjectDTO{" + "name=" + name + ", description=" + description + ", color=" + color + ", kind=" + kind + ", id=" + id + ", createdOn=" + createdOn + '}';
     }
      
-     String name, description, color,kind,query;
-    int id;
+     String name, description, color,kind,query,message;
+    int id, createdBy;
     Date createdOn;
 
     public String getColor() {
@@ -75,6 +75,22 @@ public class ObjectDTO {
 
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
       
 }

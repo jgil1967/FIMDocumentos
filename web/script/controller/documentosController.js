@@ -1,8 +1,41 @@
-app.controller('documentosController',['$http','$scope','topBannerService','documentosService',
-     function ($http,$scope,topBannerService,documentosService)
+app.controller('documentosController',['$http','$scope','topBannerService','documentosService','areasService','usuariosService',
+     function ($http,$scope,topBannerService,documentosService,areasService,usuariosService)
     { 
 
-  
+      $scope.areas= [];
+       $scope.selectedAreas= [];
+              $scope.usuarios= [];
+       $scope.selectedUsuarios= []; 
+                $scope.filteredDocuments = function () {
+    return $scope.documents.filter(function (document) {
+      return $scope.selectedAreas.indexOf(document.idArea) !== -1 && $scope.selectedUsuarios.indexOf(document.createdBy) !== -1;
+    });
+  };
+              
+   areasService.getAreas().then(function(d) {
+                   $scope.areas= areasService.getList();
+                   
+                   usuariosService.getUsuarios().then(function(d) {
+                       $scope.usuarios = usuariosService.getList();
+                       
+                       angular.forEach($scope.usuarios, function (usuario, key) {
+                       $scope.selectedUsuarios.push(usuario.id);
+                   });
+                        angular.forEach($scope.areas, function (area, key) {
+                       $scope.selectedAreas.push(area.id);
+                   });
+                   
+                   $scope.getDocuments();  
+                   
+                   
+                           });  
+                   
+                  
+                
+               });  
+       
+       
+       
                $scope.options = {
     rowSelection: false, multiSelect: false, autoSelect: false,decapitate: false, largeEditDialog: false,  boundaryLinks: false,
     limitSelect: true, pageSelect: true};
@@ -23,7 +56,7 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
         
          $scope.downloadDocument = function (document){
               $scope.document = document;
-              window.console.log(JSON.stringify($scope.document));
+             // window.console.log(JSON.stringify($scope.document));
               
              documentosService.downloadDocument($scope.document).then(function (data) {
                           
@@ -36,10 +69,10 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
        documentosService.updateDocumentDialog($event,document);
    }; 
         
-        
+         
           topBannerService.setTitle("Documentos");
             $scope.createDocument = function ($event){
-             $scope.document = { id:0, fileDate:new Date(), name:'', description:'', color:"#01579b",kind:"document" };
+             $scope.document = { id:0, fileDate:new Date(), name:'', description:'',idArea:0,createdBy: $("#idUsuario").val(), color:"#01579b",kind:"document" };
               documentosService.updateDocumentDialog($event,$scope.document );
             };
                $scope.documents = [];
@@ -105,7 +138,7 @@ $scope.dates = {
 
 
 $scope.search = function ($event){
-            window.console.log("Search");
+         //   window.console.log("Search");
                 if ($scope.searchDocumentos !="" || new Date($scope.startDate) != "Invalid Date" || new Date($scope.endDate) != "Invalid Date" ||new Date( $scope.startFileDate) != "Invalid Date" ||new Date($scope.endFileDate) != "Invalid Date" )
             {
                   var dates2 = {
@@ -135,45 +168,17 @@ $scope.search = function ($event){
 
                  $scope.getDocuments = function (){
                   documentosService.getDocuments().then(function(d) {
-//                      documentosService.getDatesDTO().then(function(d) {
-//                          $scope.dates = documentosService.getDates();
-//                          //window.console.log( $scope.dates );
-//                          
-//                              var fulldate = new Date ($scope.dates.oldestCreatedOn).setHours(00,00,00);
-//                     var converted_date = moment(fulldate).format("");
-//                   $scope.startDate =  new Date (converted_date);
-//                   
-//                   
-//                   $scope.endDate=new Date ( $scope.dates.newestCreatedOn);
-//                     /////////////////////////////////////////////////////////////////////////////////////
-//                      fulldate = new Date ($scope.dates.oldestFileDate).setHours(00,00,00);
-//                      converted_date = moment(fulldate).format("");
-//                   $scope.startFileDate =  new Date (converted_date);
-//                   
-//                   
-//                   $scope.endFileDate=new Date (  $scope.dates.newestFileDate);
-//                   
-//                   if ( $scope.startFileDate > $scope.startDate ){
-//                        
-//                       $scope.startFileDate= $scope.startDate;
-//                   }
-//                   else{
-//                        
-//                        $scope.startDate= $scope.startFileDate;
-//                   }
-//                   
-//                          
-//                      });
+
                       
                    $scope.documents = documentosService.getList();
-                   
+                   window.console.log($scope.documents);
                    
                   
                    
                 });
                  };
                    
-           $scope.getDocuments();  
+           
             
             
             

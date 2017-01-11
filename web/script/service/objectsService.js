@@ -15,7 +15,7 @@ app.service('objectsService', function($http){
         }).then(function(result)
         {
              // window.console.log("Resultados: " + JSON.stringify(result.data));
-                window.console.log("Tamaño desde searchObjects: " + result.data.length);
+            //    window.console.log("Tamaño desde searchObjects: " + result.data.length);
             searchResults = result.data;
         });
         

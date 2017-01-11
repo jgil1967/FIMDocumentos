@@ -1,8 +1,10 @@
-  app.controller('documentDialogController',['$scope','$http','$filter','$timeout', '$q','documentosService','$mdDialog', 'fileUpload','tagsService','documentKeywordRelationshipService', 
-      function($scope,$http,$filter,$timeout, $q,documentosService,$mdDialog, fileUpload,tagsService,documentKeywordRelationshipService) {
+  app.controller('documentDialogController',['$scope','$http','$filter','$timeout', '$q','documentosService','$mdDialog', 'fileUpload','tagsService','documentKeywordRelationshipService','areasService', 
+      function($scope,$http,$filter,$timeout, $q,documentosService,$mdDialog, fileUpload,tagsService,documentKeywordRelationshipService,areasService) {
          
           $scope.$watch(function(){return documentosService.getDocument();}, function (document) {
-             
+             areasService.getAreas().then(function(d) {
+                 //window.console.log(areasService.getList());
+             $scope.areas = areasService.getList();
               if (document != ""){
         if (document.id == 0){
        
@@ -16,6 +18,7 @@
         locals: {
         document:  document ,
         update: false,
+        areas:$scope.areas ,
         fileUpload:fileUpload
      }
       });
@@ -32,18 +35,20 @@
                         locals: {
                             document: document,
                             update: true,
+                            areas: $scope.areas,
                             fileUpload: fileUpload
                         }
                     });
                 }
                       
               }
+              });
           },true);
           
-          function documentDialogController($scope,$http,$timeout, $q,documentosService,document,update,fileUpload,tagsService,documentKeywordRelationshipService)
+          function documentDialogController($scope,$http,$timeout, $q,documentosService,document,update,areas,fileUpload,tagsService,documentKeywordRelationshipService)
         {
-            
-
+            $scope.areas = areas;
+           // window.console.log($scope.areas );
              
 $scope.document  = document;
               $scope.update = update;
@@ -102,6 +107,8 @@ $scope.document  = document;
                                         });
 
                                     } else {
+                                           tag.createdBy = $("#idUsuario").val();
+                                               // window.console.log("Tag a crear : " + JSON.stringify(tag));
                                         tagsService.createTag(tag).then(function (data) {
                                             $scope.dDto = {
                                                 idKeyword: data.id,
@@ -176,7 +183,8 @@ if("id" in tag) {
   
 }
 else{
-     
+     tag.createdBy = $("#idUsuario").val();
+                                                window.console.log("Tag a crear : " + JSON.stringify(tag));
       tagsService.createTag(tag).then(function (data) {
                            $scope.dDto = {
         idKeyword:data.id,
