@@ -49,13 +49,55 @@
           
           function areaDialogController($scope,$http,$timeout, $q,areasService,area,update)
         {
-    //Obtener los que si y los que no
     
+    $scope.areasByArea = [];
+    $scope.possibleAreasByArea = [];
+    $scope.area  = area;
+            window.console.log($scope.area  );
+    $scope.createAreaRelationship = function (a){
+        var ar = {idArea1:$scope.area.id,idArea2: a.id }
+        areasService.createAreaRelationship(ar).then(function(d) {
+             $scope.getAreasAndStuff ();
+        });
+    };
+    
+    $scope.editArea = function (){
+        areasService.updateArea($scope.area ).then(function(d) {
+            $mdDialog.hide();
+        });
+    }
+    
+    $scope.deleteAreaRelationship = function (a){
+        var ar = {idArea1:$scope.area.id,idArea2: a.id };
+        areasService.deleteAreaRelationship(ar).then(function(d) {
+           $scope.getAreasAndStuff ();
+        });
+    };
     
               $scope.update = update;
+              
+              $scope.getAreasAndStuff = function (){
+                   areasService.getAreasByArea($scope.area  ).then(function(d) {
+              $scope.areasByArea = d;
+                    window.console.log(d);
+        
+    });
+    areasService.getPossibleAreasByArea($scope.area  ).then(function(d) {
+       $scope.possibleAreasByArea = d;
+        window.console.log(d);
+        
+    });
+    
+    
+              }
+              
+              
             if ($scope.update == true) {
+               $scope.getAreasAndStuff();
             }
-            $scope.area  = area;
+            
+            
+            
              $scope.cancel = function ($event) {
                 $mdDialog.cancel();
             };

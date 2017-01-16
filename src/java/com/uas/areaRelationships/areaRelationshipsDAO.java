@@ -58,6 +58,8 @@ public class areaRelationshipsDAO implements areaRelationshipsInterface{
 
     @Override
     public areaRelationshipsDTO deleteAreaRelationship(areaRelationshipsDTO dto) {
+       // System.out.println(" dto.getIdArea1() : " + dto.getIdArea1());
+        //System.out.println(" dto.getIdArea2() : " + dto.getIdArea2());
      PreparedStatement preparedStmt = null;
         Connection c = null;
         ResultSet rs =null;

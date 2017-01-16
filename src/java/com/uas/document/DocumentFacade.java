@@ -5,6 +5,7 @@
  */
 package com.uas.document;
 
+import com.uas.areas.areaDTO;
 import com.uas.dates.filters.filtersDTO.FiltersDTO;
 import java.util.ArrayList;
 
@@ -51,6 +52,11 @@ dDao = new DocumentDAO ();
     @Override
     public ArrayList<DocumentDTO> getDocuments(FiltersDTO dto) {
    return dDao.getDocuments(dto);
+    }
+
+    @Override
+    public ArrayList<DocumentDTO> getDocumentsOnlyEnabled(ArrayList<areaDTO> areas) {
+      return dDao.getDocumentsOnlyEnabled(areas);
     }
     
 }

@@ -1,4 +1,5 @@
 app.service('usuariosService',function($http){
+    var loggedUser = null;
     var usuarios = [];
        var usuario = "";
        var $event = "";
@@ -8,13 +9,34 @@ app.service('usuariosService',function($http){
     };  
     
     var usuariosService = {
+        getUsuarioByID: function(usuario) {
+            
+             return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/getUsuarioByID",
+    data: JSON.stringify(usuario)
+}).then(function(result){
+    
+            loggedUser = result.data;
+                
+        });  
+        },
+        getLoggedUser: function() {
+            return loggedUser;
+            },
+        
          getUsuarios: function() {
       var promise = $http.get('/FIMDocumentos/FIMRest/hello/getUsuarios').then(function (response) {
       usuarios = response.data;
       });
       return promise;
     },
-   
+    getUsuariosForAdministrator: function() {
+      var promise = $http.get('/FIMDocumentos/FIMRest/hello/getUsuariosForAdministrator').then(function (response) {
+      usuarios = response.data;
+      });
+      return promise;
+    },
     getList: function() {
        return usuarios;
     },

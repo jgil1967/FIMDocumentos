@@ -13,30 +13,27 @@
         
    
       <label style="border-bottom: black;">
-          <input autofocus placeholder="Búsqueda" style="width: 100%;     border-bottom: 1px solid #fffdfd;"  ng-model="searchDocumentos">
+          <input autofocus placeholder="Búsqueda" style="width: 100%;     border-bottom: 1px solid rgb(33,150,243); margin: 0 0 0px 0;"  ng-model="searchDocumentos">
       </label>
-    
-      <md-input-container>
-        <label>Areas</label>
-        
-        <md-select ng-model="selectedAreas" multiple>
-          <md-optgroup label="Areas">
-            <md-option ng-value="area.id" ng-repeat="area in areas ">{{area.name}}</md-option>
-          </md-optgroup>
-        </md-select>
-        
-      </md-input-container>
+     
+  
 
-    <md-input-container>
-        <label>Usuarios</label>
-        
-        <md-select ng-model="selectedUsuarios" multiple>
-          <md-optgroup label="Usuarios">
-            <md-option ng-value="usuario.id" ng-repeat="usuario in usuarios ">{{usuario.name}}</md-option>
+   <ul class="collapsible" data-collapsible="accordion">
+        <li>
+      <div class="collapsible-header"><i class="material-icons">filter_list</i>Filtros</div>
+      <div class="collapsible-body">
+            <div style="font-weight: bold;">Areas</div>
+      <md-input-container >
+        <md-select ng-model="selectedAreas" multiple style="min-width: 100%;  width: 100vw; display: inline-block;" aria-label="selected areas">
+          <md-optgroup label="Areas">
+            <md-option  ng-value="area.id" ng-repeat="area in areas ">{{area.name}}</md-option>
           </md-optgroup>
         </md-select>
-        
       </md-input-container>
+          
+            
+<div style="font-family: Roboto,'Helvetica Neue',sans-serif;">
+    <div style="font-weight: bold;">Palabras clave</div>
    <tags-input ng-model="tags" 
                 display-property="name" 
                 placeholder="Palabras clave" 
@@ -49,29 +46,37 @@
                      max-results-to-show="32"
                      template="autocomplete-template"></auto-complete>
     </tags-input>
+
     <table>
       <tr>
         <tr>
-            <td colspan="2">Fecha de registro</td>
-            <td colspan="2">Fecha de documento</td>
+        
+            <td colspan="2" style="font-weight: bold;">Fecha de registro</td>
+            <td colspan="2" style="font-weight: bold;">Fecha de documento</td>
             </tr>
-<!--        <td>Fecha inicial subido</td>-->
-        <td><input type="date" name="S_Date" ng-model="startDate" ng-min="startDate" min="startDate"/></td>
-<!--        <td>Fecha final subido</td>-->
-        <td><input type="date" name="E_Date" ng-model="endDate" ng-max="endDate"  max="endDate"/></td>
-<!--         <td>Fecha inicial</td>-->
-        <td><input type="date" name="S_Date" ng-model="startFileDate" ng-min="startFileDate" min="startFileDate"/></td>
-<!--        <td>Fecha final</td>-->
-        <td><input type="date" name="E_Date" ng-model="endFileDate" ng-max="endFileDate"  max="endFileDate"/></td>
+
+        <td><input style="font-size: small;" class="datepicker" type="date"  id="startDate"/></td>
+
+        <td><input style="font-size: small;" class="datepicker" type="date"  id="endDate"/></td>
+
+        <td><input style="font-size: small;" class="datepicker" type="date"  id="startFileDate"/></td>
+
+        <td><input style="font-size: small;" class="datepicker" type="date" id="endFileDate"/> </td>
        
         </tr>
         
       </table>
-    
-    <md-button class="md-primary md-raised" ng-click="search($event)">
+    </div>
+    <md-button class="md-primary md-raised" ng-click="search($event)" style="width: 100%">
         Buscar
     </md-button>
   
+            
+            
+      </div>
+    </li>
+    </ul>
+    
 <!--{{tables}} -->
 <md-table-container>
   <table data-md-table data-md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" data-ng-model="selected" md-progress="promise">
@@ -92,7 +97,7 @@
     <tbody md-body>
       <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in  filteredDocuments()  | filter:searchDocumentos | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
      <td md-cell>{{ document.name| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
-     <td md-cell>{{document.description}}</td>
+     <td md-cell>{{ document.description| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
      
      <td md-cell>{{document.createdOn | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
      <td md-cell>{{document.area.name}}</td>

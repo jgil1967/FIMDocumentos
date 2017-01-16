@@ -15,6 +15,19 @@ app.service('documentosService',function($http){
       });
       return promise;
     },
+     getDocumentsOnlyEnabled: function(areas) {
+   
+       return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/getDocumentsOnlyEnabled",
+    data: JSON.stringify(areas)
+}).then(function(result){
+    
+          documents = result.data;
+            
+        });  
+        
+    },
       getDocumentsFilters: function(filters) {
             window.console.log("Filters: " + JSON.stringify(filters));
  return  $http({

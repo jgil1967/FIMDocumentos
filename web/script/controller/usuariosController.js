@@ -2,7 +2,20 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
      function ($scope,topBannerService,usuariosService)
     { 
         
-           
+           setTimeout(function(){ 
+               
+               $scope.loggedUser = usuariosService.getLoggedUser();
+               window.console.log($scope.loggedUser );
+               if ($scope.loggedUser.root == true ){
+                   $scope.getUsuarios(); 
+               }
+               else if ($scope.loggedUser.root == false && $scope.loggedUser.isAdministrator == true){
+                  window.console.log("Solo administrador");
+                   $scope.getUsuariosForAdministrator ();
+               }
+              
+                }, 500);
+                
                $scope.options = {
     rowSelection: false, multiSelect: false, autoSelect: false,decapitate: false, largeEditDialog: false,  boundaryLinks: false,
     limitSelect: true, pageSelect: true};
@@ -21,7 +34,9 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
   };
         
         
-         
+          $scope.updateUserDirectly = function (usuario){
+       usuariosService.updateUser(usuario);
+   }; 
         
          $scope.updateUser = function ($event,usuario){
        usuariosService.updateUsuarioDialog($event,usuario);
@@ -30,7 +45,7 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
         
           topBannerService.setTitle("Usuarios");
             $scope.createUsuario = function ($event){
-             $scope.usuario = { id:0, name:'', description:'',contrasena:'',availability:true ,idArea:0, createdBy: $("#idUsuario").val()};
+             $scope.usuario = { id:0, name:'', description:'',contrasena:'',enabled:true,availability:true ,idArea:0,root:false, createdBy: $("#idUsuario").val()};
              
               usuariosService.updateUsuarioDialog($event,$scope.usuario );
               
@@ -40,11 +55,18 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
                  $scope.getUsuarios = function (){
                   usuariosService.getUsuarios().then(function(d) {
                    $scope.users = usuariosService.getList();
-             // window.console.log("Usuarios : " +  JSON.stringify($scope.usuarios));
+             
+                });
+                 };
+                 
+                   $scope.getUsuariosForAdministrator = function (){
+                  usuariosService.getUsuariosForAdministrator().then(function(d) {
+                   $scope.users = usuariosService.getList();
+             
                 });
                  };
                    
-        $scope.getUsuarios();  
+         
             
             
             

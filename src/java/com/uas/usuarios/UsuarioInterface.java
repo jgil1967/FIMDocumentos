@@ -13,8 +13,10 @@ import java.util.ArrayList;
  */
 public interface UsuarioInterface {
      UsuarioDTO createUsuario (UsuarioDTO oDto);
+     UsuarioDTO getUsuarioByID (UsuarioDTO dto);
      UsuarioDTO updateUsuario (UsuarioDTO oDto);
-     ArrayList <UsuarioDTO> obtenerUsuarios ();
+     ArrayList <UsuarioDTO> obtenerUsuariosForRoot ();
+     ArrayList <UsuarioDTO> obtenerUsuariosForAdministrator ();
      public UsuarioDTO iniciarSesion(UsuarioDTO dto) throws Exception;
      public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception;
 }

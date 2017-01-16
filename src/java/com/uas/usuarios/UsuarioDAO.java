@@ -29,13 +29,14 @@ public class UsuarioDAO implements UsuarioInterface{
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
           c = gd.getTomcatDataSource().getConnection();
-          String SQL = "INSERT INTO \"public\".\"usuario\" (\"id\",\"contraseña\",\"isAdministrator\",\"enabled\",\"idArea\") VALUES (?,?,?,?,?)";
+          String SQL = "INSERT INTO \"public\".\"usuario\" (\"id\",\"contraseña\",\"isAdministrator\",\"enabled\",\"idArea\",\"root\") VALUES (?,?,?,?,?,?)";
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, oDto.getId());
             preparedStmt.setString(2, oDto.getcontrasena());
             preparedStmt.setBoolean(3, oDto.getIsAdministrator());
             preparedStmt.setBoolean(4, oDto.getEnabled());
-            preparedStmt.setInt(5, oDto.getIdArea());
+            preparedStmt.setInt(5, oDto.getArea().getId());
+            preparedStmt.setBoolean(6, oDto.getRoot());
           preparedStmt.executeUpdate();
              
          
@@ -74,19 +75,24 @@ public class UsuarioDAO implements UsuarioInterface{
        lista = new ArrayList<UsuarioDTO> ();
          try{
                  c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"usuario\".\"id\", \"usuario\".\"contraseña\", \"usuario\".\"isAdministrator\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" where \"object\".\"name\" = ? and \"usuario\".\"contraseña\" = ?";
+               String SQL = "SELECT \"usuario\".\"id\", \"usuario\".\"root\", \"usuario\".\"contraseña\", \"usuario\".\"isAdministrator\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"usuario\".\"enabled\" AS \"enabledUser\", \"area\".\"enabled\" AS \"enabledArea\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" JOIN \"area\" ON \"usuario\".\"idArea\" = \"area\".\"id\" where \"object\".\"name\" = ? and \"usuario\".\"contraseña\" = ? and \"usuario\".\"enabled\" = true and  \"area\".\"enabled\" = true ";
                ps = c.prepareStatement(SQL);
                ps.setString(1, dto.getName());
                 ps.setString(2, dto.getContrasena());
                rs = ps.executeQuery();
                    while (rs.next()) {
-                     //  System.out.println("Hello");
+                     
+                     
+                         
                        objeto = new UsuarioDTO();
                        objeto.setId(rs.getInt("id"));
                        objeto.setName(rs.getString("name"));
                        objeto.setVerified(true);
                        objeto.setIsAdministrator(rs.getBoolean("isAdministrator"));
-                      lista.add(objeto);
+                       objeto.setRoot(rs.getBoolean("root"));
+                      lista.add(objeto);   
+                     
+                      
                    }
                  
                  
@@ -118,7 +124,7 @@ public class UsuarioDAO implements UsuarioInterface{
     }
 
     @Override
-    public ArrayList<UsuarioDTO> obtenerUsuarios() {
+    public ArrayList<UsuarioDTO> obtenerUsuariosForRoot() {
        
         ArrayList<UsuarioDTO> list = null;
      UsuarioDTO dto = null;
@@ -129,7 +135,7 @@ public class UsuarioDAO implements UsuarioInterface{
        list = new ArrayList<UsuarioDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"usuario\".\"id\",\"usuario\".\"contraseña\",\"usuario\".\"idArea\", \"usuario\".\"isAdministrator\", \"usuario\".\"enabled\", \"object\".\"name\", \"object\".\"createdBy\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\"";
+               String SQL = "SELECT \"usuario\".\"id\",\"usuario\".\"root\", \"usuario\".\"contraseña\", \"usuario\".\"idArea\", \"usuario\".\"isAdministrator\", \"usuario\".\"enabled\", \"object\".\"name\", \"object\".\"createdBy\", \"object2\".\"name\" AS \"nameArea\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object2\" ON \"usuario\".\"idArea\" = \"object2\".\"id\"";
                ps = c.prepareStatement(SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
@@ -138,12 +144,13 @@ public class UsuarioDAO implements UsuarioInterface{
                        dto.setName(rs.getString("name"));
                        dto.setContrasena(rs.getString("contraseña"));
                         dto.setContrasenaVerify(rs.getString("contraseña"));
-                        
-                        
                         dto.setEnabled(rs.getBoolean("enabled"));
+                        dto.setRoot(rs.getBoolean("root"));
                         dto.setIsAdministrator(rs.getBoolean("isAdministrator"));
                         dto.setCreatedBy(rs.getInt("createdBy"));
                         dto.setIdArea(rs.getInt("idArea"));
+                        dto.getArea().setId(rs.getInt("idArea"));
+                        dto.getArea().setName(rs.getString("nameArea"));
                       list.add(dto);
                    }
          }
@@ -177,14 +184,16 @@ public class UsuarioDAO implements UsuarioInterface{
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
           c = gd.getTomcatDataSource().getConnection();
-          String SQL = "update \"public\".\"usuario\" set \"enabled\"=?, \"contraseña\"=?, \"isAdministrator\"=?,\"idArea\"=?  where \"id\"=? ";
+          String SQL = "update \"public\".\"usuario\" set \"enabled\"=?, \"contraseña\"=?, \"isAdministrator\"=?,\"idArea\"=?,\"root\"=?   where \"id\"=? ";
      	preparedStmt = c.prepareStatement(SQL);
          
             preparedStmt.setBoolean(1, oDto.getEnabled());
             preparedStmt.setString(2, oDto.getcontrasena());
             preparedStmt.setBoolean(3, oDto.getIsAdministrator());
-            preparedStmt.setInt(4, oDto.getIdArea());
-            preparedStmt.setInt(5, oDto.getId());
+            preparedStmt.setInt(4, oDto.getArea().getId());
+            preparedStmt.setBoolean(5, oDto.getRoot());
+            preparedStmt.setInt(6, oDto.getId());
+            
           preparedStmt.executeUpdate();
              
          
@@ -256,5 +265,108 @@ public class UsuarioDAO implements UsuarioInterface{
          }
         return dto;
     }
+
+    @Override
+    public UsuarioDTO getUsuarioByID(UsuarioDTO dto) {
+       getTomcatDataSource gd = new getTomcatDataSource();
+        ResultSet rs = null;
+        Connection c = null;
+        PreparedStatement ps = null;
+       
+         try{
+               c = gd.getTomcatDataSource().getConnection();
+               String SQL = "SELECT \"usuario\".\"id\", \"usuario\".\"root\", \"usuario\".\"contraseña\", \"usuario\".\"idArea\", \"usuario\".\"isAdministrator\", \"usuario\".\"enabled\", \"object\".\"name\", \"object\".\"createdBy\", \"area\".\"superuser\", \"object2\".\"name\" AS \"nameArea\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" JOIN \"area\" ON \"usuario\".\"idArea\" = \"area\".\"id\" JOIN \"object\" AS \"object2\" ON \"area\".\"id\" = \"object2\".\"id\" where \"usuario\".\"id\" = ?";
+               ps = c.prepareStatement(SQL);
+               ps.setInt(1, dto.getId());
+                 rs = ps.executeQuery();
+                   while (rs.next()) {
+                       dto.setId(rs.getInt("id"));
+                       dto.setName(rs.getString("name"));
+                       dto.setContrasena(rs.getString("contraseña"));
+                        dto.setContrasenaVerify(rs.getString("contraseña"));
+                        dto.setEnabled(rs.getBoolean("enabled"));
+                        dto.setIsAdministrator(rs.getBoolean("isAdministrator"));
+                        dto.setRoot(rs.getBoolean("root"));
+                        dto.setCreatedBy(rs.getInt("createdBy"));
+                        dto.setIdArea(rs.getInt("idArea"));
+                        dto.getArea().setSuperuser(rs.getBoolean("superuser"));
+                        dto.getArea().setId(rs.getInt("idArea"));
+                        dto.getArea().setName(rs.getString("nameArea"));
+                      
+                   }
+                   return dto;
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+         finally{
+             try{
+                 if (rs != null){
+                     rs.close();
+                 }
+                  if (c != null){
+                     c.close();
+                 }
+                   if (ps != null){
+                     ps.close();
+                 }
+             }
+             catch (Exception e2){
+                 e2.printStackTrace();
+             }
+         }
+        return dto; }
+
+    @Override
+    public ArrayList<UsuarioDTO> obtenerUsuariosForAdministrator() {
+   
+        ArrayList<UsuarioDTO> list = null;
+     UsuarioDTO dto = null;
+       getTomcatDataSource gd = new getTomcatDataSource();
+        ResultSet rs = null;
+        Connection c = null;
+        PreparedStatement ps = null;
+       list = new ArrayList<UsuarioDTO> ();
+         try{
+               c = gd.getTomcatDataSource().getConnection();
+               String SQL = "SELECT \"usuario\".\"id\",\"usuario\".\"root\", \"usuario\".\"contraseña\", \"usuario\".\"idArea\", \"usuario\".\"isAdministrator\", \"usuario\".\"enabled\", \"object\".\"name\", \"object\".\"createdBy\", \"object2\".\"name\" AS \"nameArea\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object2\" ON \"usuario\".\"idArea\" = \"object2\".\"id\" where \"usuario\".\"root\" = FALSE AND \"usuario\".\"isAdministrator\" = FALSE  ";
+               ps = c.prepareStatement(SQL);
+                 rs = ps.executeQuery();
+                   while (rs.next()) {
+                       dto = new UsuarioDTO();
+                       dto.setId(rs.getInt("id"));
+                       dto.setName(rs.getString("name"));
+                       dto.setContrasena(rs.getString("contraseña"));
+                        dto.setContrasenaVerify(rs.getString("contraseña"));
+                        dto.setEnabled(rs.getBoolean("enabled"));
+                        dto.setRoot(rs.getBoolean("root"));
+                        dto.setIsAdministrator(rs.getBoolean("isAdministrator"));
+                        dto.setCreatedBy(rs.getInt("createdBy"));
+                        dto.setIdArea(rs.getInt("idArea"));
+                        dto.getArea().setId(rs.getInt("idArea"));
+                        dto.getArea().setName(rs.getString("nameArea"));
+                      list.add(dto);
+                   }
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+         finally{
+             try{
+                 if (rs != null){
+                     rs.close();
+                 }
+                  if (c != null){
+                     c.close();
+                 }
+                   if (ps != null){
+                     ps.close();
+                 }
+             }
+             catch (Exception e2){
+                 e2.printStackTrace();
+             }
+         }
+        return list; }
     
 }

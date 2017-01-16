@@ -1,11 +1,18 @@
-  app.controller('topBannerController',['$scope','topBannerService', function($scope,topBannerService) {
+  app.controller('topBannerController',['$scope','topBannerService','usuariosService',
+      function($scope,topBannerService,usuariosService) {
 
-        // create a message to display in our view
+        //window.console.log("idUsuario : " + $("#idUsuario").val());
+        var user = {id: $("#idUsuario").val()};
+         usuariosService.getUsuarioByID(user).then(function(d){
+           $scope.loggedUser = usuariosService.getLoggedUser();
+           
+        });
+        $scope.loggedUser = {};
         $scope.title = "";
         $scope.$watch(function(){return topBannerService.getTitle();}, function (t) {
             if (t!=""){
                  $scope.title = t;
-                 //window.console.log( $scope.message);
+                 
             }
             }, true);
     }]);

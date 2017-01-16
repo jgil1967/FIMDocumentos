@@ -1,38 +1,83 @@
 app.controller('documentosController',['$http','$scope','topBannerService','documentosService','areasService','usuariosService',
      function ($http,$scope,topBannerService,documentosService,areasService,usuariosService)
     { 
-
+ setTimeout(function(){ $('.collapsible').collapsible(); 
+ 
+   $('.datepicker').pickadate({
+    selectMonths: true, // Creates a dropdown to control month
+    selectYears: 15 // Creates a dropdown of 15 years to control year
+  });
+  
+    
+ }, 700);
       $scope.areas= [];
        $scope.selectedAreas= [];
               $scope.usuarios= [];
        $scope.selectedUsuarios= []; 
                 $scope.filteredDocuments = function () {
     return $scope.documents.filter(function (document) {
-      return $scope.selectedAreas.indexOf(document.idArea) !== -1 && $scope.selectedUsuarios.indexOf(document.createdBy) !== -1;
+      //return $scope.selectedAreas.indexOf(document.idArea) !== -1 && $scope.selectedUsuarios.indexOf(document.createdBy) !== -1;
+        return $scope.selectedAreas.indexOf(document.idArea) !== -1 ;
     });
   };
               
-   areasService.getAreas().then(function(d) {
+              
+              
+               setTimeout(function(){
+                   $scope.loggedUser = usuariosService.getLoggedUser(); 
+                  // window.console.log($scope.loggedUser);
+                   //window.console.log($scope.loggedUser.area.superuser);
+                   if ($scope.loggedUser.area.superuser == false){
+                       
+                     var area = {id:$scope.loggedUser.idArea,name:$scope.loggedUser.area.name};
+                     areasService.getAreasByArea2(area).then(function(d) {
                    $scope.areas= areasService.getList();
                    
-                   usuariosService.getUsuarios().then(function(d) {
-                       $scope.usuarios = usuariosService.getList();
-                       
-                       angular.forEach($scope.usuarios, function (usuario, key) {
-                       $scope.selectedUsuarios.push(usuario.id);
-                   });
                         angular.forEach($scope.areas, function (area, key) {
                        $scope.selectedAreas.push(area.id);
                    });
+                   $scope.getDocumentsOnlyEnabled($scope.areas);  
+               });    
+                   }
+                   else{
+                           areasService.getAreas().then(function(d) {
+                   $scope.areas= areasService.getList();
+                        angular.forEach($scope.areas, function (area, key) {
+                       $scope.selectedAreas.push(area.id);
+                            });    
+                            $scope.getDocuments();  
+                     });   
+                       
+                   }
                    
-                   $scope.getDocuments();  
-                   
-                   
-                           });  
-                   
-                  
+               
+                }, 100);
                 
-               });  
+              $scope.obteniendo = false; 
+              
+              
+                $scope.getDocumentsOnlyEnabled = function (areas){
+                    window.console.log(areas);
+             if ($scope.obteniendo == false){
+                 $scope.obteniendo = true;
+                 documentosService.getDocumentsOnlyEnabled(areas).then(function(d) {
+                        $scope.documents = documentosService.getList();
+                        $scope.obteniendo = false;
+                    });
+             }
+                  
+                 }; 
+         $scope.getDocuments = function (){
+             if ($scope.obteniendo == false){
+                 $scope.obteniendo = true;
+                 documentosService.getDocuments().then(function(d) {
+                        $scope.documents = documentosService.getList();
+                        $scope.obteniendo = false;
+                    });
+             }
+                  
+                 };  
+  
        
        
        
@@ -56,8 +101,6 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
         
          $scope.downloadDocument = function (document){
               $scope.document = document;
-             // window.console.log(JSON.stringify($scope.document));
-              
              documentosService.downloadDocument($scope.document).then(function (data) {
                           
                         });
@@ -117,7 +160,9 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
     
   $scope.loadCountries = function($query) {
     return $http.get('/FIMDocumentos/FIMRest/hello/getKeywords', { cache: false}).then(function(response) {
-      countries = response.data;
+                
+        countries = response.data;
+                //window.console.log(countries);
       return countries.filter(function(country) {
         return country.name.toLowerCase().indexOf($query.toLowerCase()) != -1;
       });
@@ -136,24 +181,33 @@ $scope.dates = {
 //            window.console.log(JSON.stringify($scope.dates ));
 //});
 
-
+ $scope.startDate;
+ $scope.endDate;
+ $scope.startFileDate;
+ $scope.endFileDate;
 $scope.search = function ($event){
          //   window.console.log("Search");
                 if ($scope.searchDocumentos !="" || new Date($scope.startDate) != "Invalid Date" || new Date($scope.endDate) != "Invalid Date" ||new Date( $scope.startFileDate) != "Invalid Date" ||new Date($scope.endFileDate) != "Invalid Date" )
             {
+                
+                
                   var dates2 = {
-                oldestCreatedOn: $scope.startDate,
-                newestCreatedOn: $scope.endDate,
-                oldestFileDate: $scope.startFileDate,
-                newestFileDate: $scope.endFileDate
-                    } 
+                oldestCreatedOn: new Date($("#startDate").val()),
+                newestCreatedOn: new Date($("#endDate").val()),
+                oldestFileDate: new Date($("#startFileDate").val()),
+                newestFileDate: new Date($("#endFileDate").val())
+                    } ;
+                 
                     var filters = {
                         dates:dates2,
                         keywords:$scope.tags,
                         filterQuery: $scope.searchDocumentos
                     }
                 documentosService.getDocumentsFilters(filters).then(function() {
+                    window.console.log("documentosService.getList() : " + documentosService.getList());
                 $scope.documents = documentosService.getList();
+                
+                //Ya se por que es dude
             });
             }
             
@@ -166,17 +220,7 @@ $scope.search = function ($event){
 
 
 
-                 $scope.getDocuments = function (){
-                  documentosService.getDocuments().then(function(d) {
-
-                      
-                   $scope.documents = documentosService.getList();
-                   window.console.log($scope.documents);
-                   
-                  
-                   
-                });
-                 };
+                
                    
            
             

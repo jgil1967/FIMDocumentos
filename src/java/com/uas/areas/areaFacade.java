@@ -26,5 +26,25 @@ areaInterface dao = null;
     @Override
     public ArrayList<areaDTO> getAreas() {
    return dao.getAreas(); }
+
+    @Override
+    public ArrayList<areaDTO> getPossibleAreasByArea(areaDTO oDto) {
+       return dao.getPossibleAreasByArea(oDto); 
+    }
+
+    @Override
+    public ArrayList<areaDTO> getAreasByArea(areaDTO oDto) {
+    return dao.getAreasByArea(oDto); 
+    }
+
+    @Override
+    public ArrayList<areaDTO> getAreasByArea2(areaDTO oDto) {
+       return dao.getAreasByArea2(oDto);
+    }
+
+    @Override
+    public areaDTO updateArea(areaDTO dto) {
+      return dao.updateArea(dto);
+    }
     
 }

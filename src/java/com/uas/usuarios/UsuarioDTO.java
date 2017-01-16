@@ -5,6 +5,7 @@
  */
 package com.uas.usuarios;
 
+import com.uas.areas.areaDTO;
 import com.uas.object.ObjectDTO;
 
 import java.io.Serializable;
@@ -16,14 +17,17 @@ import java.io.Serializable;
 public class UsuarioDTO extends ObjectDTO implements Serializable {
     
    public String contrasena,contrasenaVerify;
-   public  Boolean verified, isAdministrator,enabled,availability;
+   public  Boolean verified, isAdministrator,enabled,availability, root;
 public int idArea;
+public areaDTO area;
 
     public UsuarioDTO() {
        isAdministrator = false;
        verified = false;
        enabled = false;
+       root = false;
        availability = true;
+       area = new areaDTO();
     }
 
     public int getIdArea() {
@@ -102,6 +106,22 @@ public int idArea;
 
     public void setContrasenaVerify(String contrasenaVerify) {
         this.contrasenaVerify = contrasenaVerify;
+    }
+
+    public areaDTO getArea() {
+        return area;
+    }
+
+    public void setArea(areaDTO area) {
+        this.area = area;
+    }
+
+    public Boolean getRoot() {
+        return root;
+    }
+
+    public void setRoot(Boolean root) {
+        this.root = root;
     }
 
    

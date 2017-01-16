@@ -41,8 +41,9 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <link href="script/shared/dist/md-data-table.min.css" rel="stylesheet" type="text/css"/>
     <link href="script/ng-tags-input.min/ng-tags-input.min.css" rel="stylesheet" type="text/css"/>
     
-    
-      <script src="script/shared/jquery-1.12.0.min.js" type="text/javascript"></script>
+    <script src="assets/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+      
+      <script src="assets/js/materialize.js" type="text/javascript"></script>
        <script src="js/jquery.timeago.min.js"></script>
     <script src="js/prism.js"></script>
     <script src="js/materialize.min.js" type="text/javascript"></script>
@@ -60,6 +61,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
       <script src="script/app.js" type="text/javascript"></script>
       <script src="script/service/areasService.js" type="text/javascript"></script>
       <script src="script/service/contentsService.js" type="text/javascript"></script>
+      <script src="script/service/keywordsService.js" type="text/javascript"></script>
       <script src="script/service/objectsService.js" type="text/javascript"></script>
       <script src="script/service/documentosService.js" type="text/javascript"></script>
       <script src="script/service/topBannerService.js" type="text/javascript"></script>
@@ -68,15 +70,30 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
       <script src="script/service/usuariosService.js" type="text/javascript"></script>
       <script src="script/controller/dialogControllers/usuarioDialogController.js" type="text/javascript"></script>
       <script src="script/controller/appController.js" type="text/javascript"></script>
+      <script src="script/controller/keywordsController.js" type="text/javascript"></script>
       <script src="script/controller/controllerSideNavBar.js" type="text/javascript"></script>
       <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/documentosController.js" type="text/javascript"></script>
       <script src="script/controller/searchController.js" type="text/javascript"></script>
     <!--Dialog controllers -->
     <script src="script/controller/dialogControllers/documentDialogController.js" type="text/javascript"></script>
+    <script src="script/controller/dialogControllers/keywordDialogController.js" type="text/javascript"></script>
     <script src="script/controller/usuariosController.js" type="text/javascript"></script>
     <script src="script/controller/areasController.js" type="text/javascript"></script>
     <script src="script/controller/dialogControllers/areaDialogController.js" type="text/javascript"></script>
+    <script>
+         $(document).ready(function(){
+             setTimeout(function(){ $('.collapsible').collapsible(); 
+             
+  $('.datepicker').pickadate({
+    selectMonths: true, // Creates a dropdown to control month
+    selectYears: 15 // Creates a dropdown of 15 years to control year
+  });
+  }, 500);
+    
+    
+  });
+    </script>
     <!--Dialog controllers -->
     </head>
     <!--gradient wellText-->
@@ -88,6 +105,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         
         <div ng-controller="documentDialogController"></div>
         <div ng-controller="usuarioDialogController"></div>
+        <div ng-controller="keywordDialogController"></div>
         <div ng-controller="areaDialogController"></div>
         <div ng-controller="searchController"></div>
    <script type="text/ng-template" id="tag-template">
@@ -110,12 +128,48 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         </div>
       </div>
     </script>
+     <script type="text/ng-template" id="keywordDialog.tmpl.html">
+   <md-dialog aria-label="Keyword" ng-cloak>
+        <md-toolbar>
+        <div class="md-toolbar-tools">
+        <h2  ng-if="!update">Nueva palabra clave</h2>
+         <h2 ng-if="update">Editar palabra clave</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+        </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+        <div class="md-dialog-content">
+        <form ng-submit="$event.preventDefault()" novalidate name="formKeyword">
+        <!-------------------------------------------->
+
+        <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input md-autofocus autofocus  required  id="nombre" ng-model="keyword.name" type="text" class="validate">
+        <label for="nombre">Nombre (campo obligatorio) </label>
+        </div>
+  </br>
+ 
+        </md-dialog-content>
+        <md-dialog-actions>
+        <button ng-if="!update" ng-disabled="formKeyword.$invalid " class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoKeyword()">Registrar
+        <i class="material-icons right">send</i>
+        </button>
+        <button ng-if="update" ng-disabled="formKeyword.$invalid " class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editKeyword()">Cambiar nombre
+        <i class="material-icons right">send</i>
+        </button>
+
+        </md-dialog-actions>
+        </md-dialog>
+    </script>
      <script type="text/ng-template" id="areaDialog.tmpl.html">
    <md-dialog aria-label="Area" ng-cloak>
         <md-toolbar>
         <div class="md-toolbar-tools">
         <h2  ng-if="!update">Nueva Area</h2>
-         <h2 ng-if="update">Editar Area</h2>
+         <h2 ng-if="update">Editar área y privilegios</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
         <md-icon md-svg-src="icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
@@ -132,11 +186,80 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         <input md-autofocus autofocus  required  id="nombre" ng-model="area.name" type="text" class="validate">
         <label for="nombre">Nombre (campo obligatorio) </label>
         </div>
- 
-  
+{{loggedUser.root}}
+<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;" ng-show="!loggedUser.root" >
+         <md-switch ng-model="area.superuser" aria-label="Switch 1" > Es de superusuarios
+ </md-switch>
+    </div>
+    
+    <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;" ng-hide="" >
+         <md-switch ng-model="area.enabled" aria-label="Switch 1" > Habilitada
+ </md-switch>
+    </div>
+    
   </br>
+  <div ng-if="update && !area.superuser ">
+  <h5>Privilegios</h5>
+  <!--{{tables}} -->
+  <p>No permitidos</p>
+  <md-table-container>
+  <table data-md-table data-md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" data-ng-model="selected" md-progress="promise">
 
+    <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+      <tr md-row>
+        <th md-column md:order:by="name"><span>Nombre</span></th>
+        <th md-column ><span>Agregar</span></th>
+       
+        
+      </tr>
+    </thead>
+    <tbody md-body>
+      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="area in possibleAreasByArea| filter:searchAreas | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
+     <td md-cell>{{ area.name| limitTo: 20 }}{{area.name.length > 20 ? '...' : ''}}</td>
+      <td md-cell>    
+       <md-button ng-click="createAreaRelationship(area)" class="md-fab md-primary" aria-label="Agregar">
+       <i class="material-icons">add</i>
+        </md-button>
+         </td>   
+     
+     
+    
  
+      </tr>
+    </tbody>
+  </table>
+  <p>Permitidos</p>
+</md-table-container>
+<md-table-container>
+  <table data-md-table data-md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" data-ng-model="selected" md-progress="promise">
+
+    <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+      <tr md-row>
+        <th md-column md:order:by="name"><span>Nombre</span></th>
+        <th md-column ><span>Quitar</span></th>
+       
+        
+      </tr>
+    </thead>
+    <tbody md-body>
+      <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="area in areasByArea| filter:searchAreas | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
+     <td md-cell>{{ area.name| limitTo: 20 }}{{area.name.length > 20 ? '...' : ''}}</td>
+         <td md-cell>    
+       <md-button ng-click="deleteAreaRelationship(area)" class="md-fab md-primary" aria-label="Quitar">
+       <i class="material-icons">clear</i>
+        </md-button>
+         </td>
+     
+     
+    
+ 
+      </tr>
+    </tbody>
+  </table>
+</md-table-container>
+  </div>
+  
+  <!--{{tables}} -->
         </form>
         </div>
         </md-dialog-content>
@@ -192,36 +315,46 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         <label for="contrasenaVerify">Verificar contraseña (campo obligatorio) </label>
         </div>
 <br>
+<label ng-if="update">Area actual: {{usuario.area.name}}</label>
+<br>
   <md-input-container>
-          <label>Areas</label>
-          <md-select ng-model="usuario.idArea">
+          <label>Areas </label>
+          <md-select ng-model="usuario.area">
 <!--            <md-option><em>None</em></md-option> -->
-            <md-option ng-repeat="area in areas" ng-value="area.id" >
+            <md-option ng-repeat="area in areas" ng-value="area" >
               {{area.name}}
             </md-option>
           </md-select>
         </md-input-container>
  <br>
 <!-------------------------------------------->
-<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
-         <md-switch ng-model="usuario.isAdministrator" aria-label="Switch 1" > Es administrador
+<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;" ng-hide="!loggedUser.root" >
+         <md-switch ng-model="usuario.root" aria-label="Switch 1" > Es root
+ </md-switch>
     </div>
-  </md-switch>
- <br>
+  
+  
 <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
-         <md-switch ng-model="usuario.enabled" aria-label="Switch 1" > Habilitado
+         <md-switch ng-model="usuario.isAdministrator" aria-label="Switch 2" ng-hide="!loggedUser.root"> Es administrador
+ </md-switch>
     </div>
-  </md-switch>
+  
+ 
+<div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+         <md-switch ng-model="usuario.enabled" aria-label="Switch 3" > Habilitado
+ </md-switch>
+    </div>
+  
  <br>
  
         </form>
         </div>
         </md-dialog-content>
         <md-dialog-actions>
-        <button ng-if="!update" ng-disabled="formUsuario.$invalid || !usuario.availability  ||  usuario.idArea==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoUsuario()">Registrar
+        <button ng-if="!update" ng-disabled="formUsuario.$invalid || !usuario.availability  ||  usuario.area.id==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoUsuario()">Registrar
         <i class="material-icons right">send</i>
         </button>
-        <button ng-if="update" ng-disabled="formUsuario.$invalid   || !usuario.availability ||  usuario.idArea ==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editUsuario()">Editar
+        <button ng-if="update" ng-disabled="formUsuario.$invalid   || !usuario.availability ||  usuario.area.id ==0|| usuario.idCarrera==0 ||usuario.contrasena!=usuario.contrasenaVerify" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editUsuario()">Editar
         <i class="material-icons right">send</i>
         </button>
 
@@ -266,7 +399,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
 <!--document.fileDateDate -->
   <div class="input-field col ">
         <p>Fecha del documento</p>
-        <input required  id="date" ng-model="document.fileDate" type="date" class="validate">
+        <input required  id="date" class="datepicker" ng-model="document.fileDate" type="date" class="validate">
 
         </div>
 <!-------------------------------------------->
@@ -310,12 +443,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         <!-------------------------------------------->
      
            <br>
-    
-
-       <br>
-           <input type="color" name="color1" id="color1" ng-model="document.color"></br>
-      <label>Color :   {{document.color}}</label> 
-       
+   
            <!-------------------------------------------->
          
           
@@ -339,8 +467,12 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <a href="#" data-activates="nav-mobile" class="button-collapse top-nav waves-effect waves-paquetexpress circle hide-on-large-only"><i class="material-icons">menu</i></a>
       </div>
         <ul id="nav-mobile" class="side-nav fixed" ng-controller="controllerSideNavBar as ctrl">
+            
         <li class="logo">
+             <label style=" color:black; font-weight: bold;" >Bienvenido usuario {{loggedUser.name}} de {{loggedUser.area.name}}</label>
+                <br>
             <a id="logo-container" href="#" class="brand-logo">
+               
                 <img id="front-page-logo"  src="img/uas.png" alt=""/>
 <!--                <object id="front-page-logo" class="svg-class" type="image/svg+xml" data="img/uas.svg"></object>-->
            </a> 
@@ -360,7 +492,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
           <div style="margin-top: 20px">
                <div  ng-repeat="opcion in opciones"> 
               
-        <li class="bold"><a ng-href="#/{{opcion.url}}" class="waves-effect waves-paquetexpress">{{opcion.name}}</a></li>
+        <li  class="bold" id="boton{{opcion.name}}"><a ng-href="#/{{opcion.url}}" class="waves-effect waves-paquetexpress">{{opcion.name}}</a></li>
         </div>
                    <li class="bold"><a ng-href="http://localhost:8080/FIMDocumentos/UsuarioServlet?task=cerrarsesionhttp" class="waves-effect waves-paquetexpress">Cerrar sesión</a></li>
            
@@ -374,12 +506,13 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         
         <div class="section no-pad-bot" id="index-banner" ng-controller="topBannerController">
         <div class="container">
-                  <div class='row center'>
+                  <div class='row '>
         <!--   <h4 class ="header col s12 light center">A modern responsive front-end framework based on Material Design</h4>
          --> </div>
-            
+<!--            <p style="color:white;">Bienvenido - {{loggedUser.name}}</p>-->
          <h4 class="header">Repositorio de documentos - FIM</h4> 
           <h5 class="header">{{title}}</h5> 
+          
              </div>
           <br>
 

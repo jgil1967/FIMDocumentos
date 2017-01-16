@@ -30,6 +30,11 @@ app.config(function($routeProvider) {
                 controllerAs: 'ctrl',
                 controller  : 'usuariosController'
             })
+            .when('/keywords', {
+                templateUrl : '/FIMDocumentos/pages/keywords.html',
+                controllerAs: 'ctrl',
+                controller  : 'keywordsController'
+            })
             .when('/areas', {
                 templateUrl : '/FIMDocumentos/pages/areas.html',
                 controllerAs: 'ctrl',

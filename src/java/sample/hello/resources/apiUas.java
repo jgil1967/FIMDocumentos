@@ -65,6 +65,31 @@ public class apiUas {
     documentKeywordRelationshipFacade documentKeywordRelationshipFacade = null;
     areaRelationshipsFacade arFac = null;
     
+    
+          @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getPossibleAreasByArea") 
+      public ArrayList<areaDTO> getPossibleAreasByArea(areaDTO oDto){
+          aFac = new areaFacade();
+          return aFac.getPossibleAreasByArea(oDto);
+      }
+            @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getAreasByArea")      
+      public ArrayList<areaDTO> getAreasByArea(areaDTO oDto){
+          aFac = new areaFacade();
+          return aFac.getAreasByArea(oDto);
+      }
+        @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getAreasByArea2") 
+    public ArrayList<areaDTO> getAreasByArea2(areaDTO oDto) {
+              aFac = new areaFacade();
+          return aFac.getAreasByArea2(oDto);
+    }
       @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)
@@ -91,13 +116,29 @@ public class apiUas {
             dFac = new DocumentFacade();
              return dFac.getDocuments();
                 }
+                 @POST
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getDocumentsOnlyEnabled")
+		public ArrayList<DocumentDTO> getDocumentsOnlyEnabled(ArrayList<areaDTO> areas) 
+                {
+            dFac = new DocumentFacade();
+             return dFac.getDocumentsOnlyEnabled(areas);
+                }
                    @GET
 		 @Produces(MediaType.APPLICATION_JSON)
                  @Path("/getUsuarios")
 		public ArrayList<UsuarioDTO> getUsuarios() 
                 {
             uFac = new UsuarioFacade();
-             return uFac.obtenerUsuarios();
+             return uFac.obtenerUsuariosForRoot();
+                }
+                 @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getUsuariosForAdministrator")
+		public ArrayList<UsuarioDTO> getUsuariosForAdministrator() 
+                {
+            uFac = new UsuarioFacade();
+             return uFac.obtenerUsuariosForAdministrator();
                 }
                    @GET
 		 @Produces(MediaType.APPLICATION_JSON)
@@ -136,7 +177,14 @@ public class apiUas {
                                 System.out.println("num2: "+ num2);
                 }
     
-               
+               @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getUsuarioByID")  
+               public UsuarioDTO getUsuarioByID(UsuarioDTO dto) {
+                   uFac = new UsuarioFacade();
+                   return uFac.getUsuarioByID(dto);
+               }
               @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)
@@ -190,6 +238,18 @@ public class apiUas {
         uFac = new UsuarioFacade();
        return  uFac.updateUsuario(dto);
     }
+    
+     @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/updateArea")
+    public areaDTO updateArea(areaDTO dto)
+    {
+        oFac = new ObjectFacade();
+       oFac.updateObject(dto); 
+             aFac = new areaFacade ();
+       return aFac.updateArea(dto);
+    }
               @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)
@@ -238,7 +298,17 @@ public class apiUas {
        kFac = new KeywordFacade();
        return  kFac.createKeyword(tag);
     }
-    
+          @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/updateKeyword")
+    public KeywordDTO updateKeyword(KeywordDTO tag) throws Exception
+    {
+     //   System.out.println("tag : "+ tag.toString());
+       oFac = new ObjectFacade();
+     oFac.updateObject(tag);
+       return  tag;
+    }
     //createDocumentKeywordRelationship
           @POST
     @Consumes({MediaType.APPLICATION_JSON})

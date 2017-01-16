@@ -17,6 +17,21 @@
 $( document ).ready(function() {
    // $("#botoningresar").click();
 });
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
+$("#username").keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
+$("#pwd").keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
 
 </script>
 <body>
@@ -25,14 +40,14 @@ $( document ).ready(function() {
 	<fieldset class="boxBody">
      <div align="center" class="padding-height-2">
          <label>Repositorio de documentos - FIM</label>
-         <img src="img/uas.png" alt="" style="width:70px;height:80px;"/>
+         <img src="img/uas.png" alt="" style="width:70px;height:85px;"/>
        
         </div>
          
 	<label>Usuario</label>
-	  <input type="text" name="user" value="name" tabindex="1" placeholder="Ingrese su nombre de usuario" required autofocus class="widget__input__text" >
+	  <input type="text" name="user" id="username" value="name" tabindex="1" placeholder="Ingrese su nombre de usuario" required autofocus class="widget__input__text" >
 	   <label>Contraseña</label>
-	  <input type="password" name="pwd" value="name" tabindex="2" required placeholder="Ingrese su contraseña" class="widget__input__text" >
+	  <input type="password" id="pwd" name="pwd" value="name" tabindex="2" required placeholder="Ingrese su contraseña" class="widget__input__text" >
 	</fieldset>
 	 <input type="hidden" name="task" value="iniciarsesionhttp">
 <a href="#" onclick="document.getElementById('login').submit();" class="myButton" id="botoningresar">

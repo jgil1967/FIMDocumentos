@@ -3,7 +3,7 @@
 
 */
 body{
-  background:#001F54;
+  background:#4E342E;
 }
 .box
 {
@@ -22,7 +22,7 @@ body{
 }
 .box.login
 {
-	height:370px;
+	height:400px;
     width:332px;
 	position:absolute;
 	left:50%;

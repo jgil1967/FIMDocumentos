@@ -52,7 +52,10 @@
           function usuarioDialogController($scope,$http,$timeout, $q,usuariosService,usuario,update,areas)
         {
     $scope.areas = areas;
+            
     $scope.usuario  = usuario;
+    $scope.loggedUser = usuariosService.getLoggedUser();
+            window.console.log($scope.loggedUser);
        $scope.update = update;
             if ($scope.update == true) {
              $scope.usarioNameOriginalAlEditar = $scope.usuario.name;

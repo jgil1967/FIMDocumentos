@@ -24,6 +24,8 @@
     <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
       <tr md-row>
         <th md-column md:order:by="name"><span>Nombre</span></th>
+        <th md-column md:order:by="area.name"><span>Area</span></th>
+        <th md-column ><span>Habilitado</span></th>
         <th md-column ><span>Editar</span></th>
      
         
@@ -31,9 +33,13 @@
     </thead>
     <tbody md-body>
       <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="user in users| filter:searchUsuarios | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
-     <td md-cell>{{ user.name| limitTo: 20 }}{{user.name.length > 20 ? '...' : ''}}</td>
-     
-     
+     <td md-cell>{{user.name}}</td>
+     <td md-cell>{{ user.area.name}}</td>
+     <td md-cell>
+         
+    <md-switch ng-model="user.enabled" aria-label="Habilitado" ng-change="updateUserDirectly(user)">
+     </md-switch>
+          </td>
      
      <td md-cell>    
            <md-button ng-click="updateUser($event,user)" class="md-fab md-primary" aria-label="Editar">

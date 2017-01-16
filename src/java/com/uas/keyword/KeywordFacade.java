@@ -34,5 +34,10 @@ KeywordInterface kDao = null;
     public ArrayList<KeywordDTO> getKeywordsByDocument(DocumentDTO dDto) {
     return kDao.getKeywordsByDocument(dDto);
     }
+
+    @Override
+    public KeywordDTO updateKeyword(KeywordDTO dDto) {
+        return kDao.updateKeyword(dDto);
+    }
     
 }

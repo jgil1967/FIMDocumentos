@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public interface KeywordInterface {
     KeywordDTO createKeyword(KeywordDTO dDto);
+    KeywordDTO updateKeyword(KeywordDTO dDto);
     ArrayList<KeywordDTO> getKeywords();
     ArrayList<KeywordDTO> getKeywordsByDocument(DocumentDTO dDto);
 }

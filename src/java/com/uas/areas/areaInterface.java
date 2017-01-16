@@ -13,5 +13,9 @@ import java.util.ArrayList;
  */
 public interface areaInterface {
  areaDTO createArea (areaDTO dto);
+ areaDTO updateArea (areaDTO dto);
  ArrayList<areaDTO> getAreas ();
+  public ArrayList<areaDTO> getPossibleAreasByArea(areaDTO oDto);
+            public ArrayList<areaDTO> getAreasByArea(areaDTO oDto);
+            public ArrayList<areaDTO> getAreasByArea2(areaDTO oDto);
 }
