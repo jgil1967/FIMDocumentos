@@ -314,7 +314,6 @@ KeywordFacade kFac = null;
         
        System.out.println("SQL : " + SQL);
         if (!SQL.equals("")){
-        
         DocumentDTO document = null;
             c = gd.getTomcatDataSource().getConnection();
         ps = c.prepareStatement(SQL);
