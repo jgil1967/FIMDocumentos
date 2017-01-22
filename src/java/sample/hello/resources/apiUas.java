@@ -390,33 +390,44 @@ public class apiUas {
     }
     
     
-    @GET
-    @Path("/pdf")
-    public Response downloadPdfFile()
-    {
-        StreamingOutput fileStream =  new StreamingOutput() 
-        {
-            @Override
-            public void write(java.io.OutputStream output) throws IOException, WebApplicationException 
-            {
-                try
-                {
-                    java.nio.file.Path path = Paths.get("/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/X-Y-Z-SATELITE 7.pdf");
-                    byte[] data = Files.readAllBytes(path);
-                    output.write(data);
-                    output.flush();
-                } 
-                catch (Exception e) 
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-        return Response
-                .ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
-                .header("content-disposition","attachment; filename = myfile.pdf")
-                .build();
-    } 
+
+    
+    int num=0;
+    String nombreFinal = "";
+    public String checkIfExistsAndReturnValid (String fileName, String name){
+        
+              System.out.println("File existed : " + fileName);
+              System.out.println("File name : " + name);
+              nombreFinal = name;
+                 File f = new File(fileName);
+
+	  if(f.exists()){
+		
+                  num++;
+                  String extension = "";
+
+int i = name.lastIndexOf('.');
+if (i > 0) {
+    extension = name.substring(i+1);
+    System.out.println("i : " + i);
+    System.out.println("extension : " + extension);
+    String nameASumar = name.substring(0,15);
+    System.out.println("fileDetail.getFileName() a sumar : " + nameASumar);
+    String ruta = fileName.substring(0,fileName.lastIndexOf(name));
+    System.out.println("ruta :" + ruta); 
+    ruta =ruta + nameASumar+ "("+num+")"+"."+extension;
+    System.out.println("ruta nueva : " + ruta);
+    return checkIfExistsAndReturnValid (ruta,nameASumar+ "("+num+")"+"."+extension);
+    
+}
+	  }else{
+		  
+		        return fileName;    
+	
+	  }
+        return fileName;
+    }
+    
     
         @POST
 	@Path("/upload")
@@ -424,15 +435,15 @@ public class apiUas {
 	public Response uploadFile(
 		@FormDataParam("file") InputStream uploadedInputStream,
 		@FormDataParam("file") FormDataContentDisposition fileDetail) {
-        System.out.println("Hello + ");
+        num=0;
+        String output = "";
 		String uploadedFileLocation = "/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/" + fileDetail.getFileName();
-
-		// save it
-		writeToFile(uploadedInputStream, uploadedFileLocation);
-
-		String output = "File uploaded to : " + uploadedFileLocation;
-        System.out.println("output : " + output);
-		return Response.status(200).entity(output).build();
+                
+              String rutaAGuardar =  checkIfExistsAndReturnValid(uploadedFileLocation,fileDetail.getFileName());
+          ////////
+                writeToFile(uploadedInputStream, rutaAGuardar);
+		 output = rutaAGuardar;
+	return Response.status(200).entity(nombreFinal).build();
 
 	}
                 

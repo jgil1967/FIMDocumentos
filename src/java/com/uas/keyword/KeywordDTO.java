@@ -14,6 +14,7 @@ import java.io.Serializable;
  */
 public class KeywordDTO extends ObjectDTO implements Serializable {
 
+    
     public KeywordDTO() {
         this.setKind("keyword");
     }

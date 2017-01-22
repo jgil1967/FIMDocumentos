@@ -12,19 +12,14 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/pages/resultadosUsuarios.html</file>
+            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/dialogControllers/documentDialogController.js</file>
+            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/topBannerController.js</file>
             <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/src/java/com/uas/document/DocumentDAO.java</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/src/java/com/uas/document/DocumentFacade.java</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/usuariosController.js</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/service/documentosService.js</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/src/java/com/uas/document/DocumentInterface.java</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/pages/resultadosAreas.html</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/areasController.js</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/service/areasService.js</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/src/java/sample/hello/resources/apiUas.java</file>
+            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/service/contentsService.js</file>
             <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/documentosController.js</file>
+            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/src/java/sample/hello/resources/apiUas.java</file>
+            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/controller/controllerSideNavBar.js</file>
             <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/index.jsp</file>
-            <file>file:/Users/jonathangil/NetBeansProjects/FIMDocumentos/web/script/service/usuariosService.js</file>
         </group>
     </open-files>
 </project-private>

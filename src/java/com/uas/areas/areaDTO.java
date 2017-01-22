@@ -17,6 +17,7 @@ public class areaDTO extends ObjectDTO{
     public areaDTO() {
         superuser = false;
         enabled = true;
+       kind = "area";
     }
 
     public boolean isEnabled() {

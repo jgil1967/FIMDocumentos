@@ -100,6 +100,7 @@ KeywordFacade kFac = null;
          preparedStmt.setInt(1, dDto.getId());
             preparedStmt.setString(2, dDto.getFilename());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+             System.out.println("Dto.getFileDate().substring(0,10): " + dDto.getFileDate().substring(0,10));
             java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
             preparedStmt.setTimestamp(3, timestamp);

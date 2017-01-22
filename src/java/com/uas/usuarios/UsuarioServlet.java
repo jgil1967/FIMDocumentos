@@ -133,7 +133,7 @@ public class UsuarioServlet extends HttpServlet {
 	   			response.sendRedirect("index.jsp");
 	   		}
 	   		else{
-	   		   
+	   		                      
 	   			response.sendRedirect("login.html");
 	   			
 	   		}

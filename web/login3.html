@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <script src="script/shared/jquery-1.12.0.min.js" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="recursos/script.js"></script>
+	<link href="recursos/styleslogin.css" rel="stylesheet">
+	
+	
+<title>FIM - Documentos</title>
+</head>
+<script type="text/javascript">
+    
+$( document ).ready(function() {
+   // $("#botoningresar").click();
+});
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
+$("#username").keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
+$("#pwd").keypress(function(e) {
+    if(e.which == 13) {
+        $("#botoningresar").click();
+    }
+});
+
+</script>
+<body>
+      
+ <form class="box login" id="login" method="post" action="UsuarioServlet"  >
+	<fieldset class="boxBody">
+     <div align="center" class="padding-height-2">
+         <label>Repositorio de documentos - FIM</label>
+         <img src="img/uas.png" alt="" style="width:70px;height:85px;"/>
+       
+        </div>
+         
+	<label>Usuario</label>
+	  <input type="text" name="user" id="username" value="root" tabindex="1" placeholder="Ingrese su nombre de usuario" required autofocus class="widget__input__text" >
+	   <label>Contraseña</label>
+	  <input type="password" id="pwd" name="pwd" value="root" tabindex="2" required placeholder="Ingrese su contraseña" class="widget__input__text" >
+	</fieldset>
+	 <input type="hidden" name="task" value="iniciarsesionhttp">
+<a href="#" onclick="document.getElementById('login').submit();" class="myButton" id="botoningresar">
+
+<span>Ingresar</span>
+
+</a>
+	
+</form>
+    
+</body>
+</html>

@@ -149,7 +149,8 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                 });
                 $scope.document.keywords = $scope.tags;
                 $scope.tagsStuff();
-
+                $scope.document.fileDate = new Date($("#fileDate").val());
+                window.console.log($scope.document);
                 documentosService.updateDocument($scope.document).then(function (data) {
                     $mdDialog.hide();
 
@@ -160,15 +161,17 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
             }
 
             $scope.nuevoDocument = function () {
-                //   window.console.log(JSON.stringify(  $scope.document));
+                
                 var file = $scope.myFile;
                 console.dir($scope.myFile);
                 console.dir($scope.myFile.name);
+                $scope.myFile.name = "NuevoNombreDude"
                 $scope.document.filename = $scope.myFile.name;
+                $scope.document.fileDate = new Date($("#fileDate").val());
+                window.console.log(JSON.stringify("Documento : " + JSON.stringify($scope.document)  ));
                 var uploadUrl = "/FIMDocumentos/FIMRest/hello/upload";
                 var fields = [{"name": "name", "data": document.name}, {"name": "description", "data": document.description}];
-                // var resp = fileUpload.uploadFileAndFieldsToUrl(file, fields, uploadUrl);
-                //    window.console.log( "document: " + JSON.stringify(document));
+                
                 var fd = new FormData();
                 fd.append('file', file);
                 for (var i = 0; i < fields.length; i++) {
@@ -178,12 +181,12 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 })
-                        .success(function () {
-
+                        .success(function (response) {
+                            console.log("Respuesta : " + response);
+                            $scope.document.filename = response;
                             documentosService.createDocument($scope.document).then(function (data) {
                                 $mdDialog.hide();
                                 $scope.document = data;
-
                                 angular.forEach($scope.tags, function (tag, key) {
                                     if ("id" in tag) {
                                         $scope.dDto = {
@@ -191,13 +194,11 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                             idDocument: $scope.document.id
                                         };
                                         documentKeywordRelationshipService.createdocumentKeywordRelationship($scope.dDto).then(function (data) {
-                                            //     console.log(JSON.stringify(data));
-
                                         });
 
                                     } else {
                                         tag.createdBy = $("#idUsuario").val();
-                                        //    window.console.log("Tag a crear : " + JSON.stringify(tag));
+                                        
                                         tagsService.createTag(tag).then(function (data) {
                                             $scope.dDto = {
                                                 idKeyword: data.id,
@@ -205,7 +206,7 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                             };
 
                                             documentKeywordRelationshipService.createdocumentKeywordRelationship($scope.dDto).then(function (data) {
-                                                //   console.log(JSON.stringify(data));
+                                                
 
                                             });
                                             countries.push($scope.dDto);

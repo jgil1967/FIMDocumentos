@@ -17,9 +17,9 @@ public class ObjectDTO {
         return "ObjectDTO{" + "name=" + name + ", description=" + description + ", color=" + color + ", kind=" + kind + ", id=" + id + ", createdOn=" + createdOn + '}';
     }
      
-     String name, description, color,kind,query,message;
-    int id, createdBy;
-    Date createdOn;
+    public String name, description, color,kind,query,message;
+   public int id, createdBy;
+    public Date createdOn;
 
     public String getColor() {
         return color;

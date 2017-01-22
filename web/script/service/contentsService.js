@@ -4,7 +4,8 @@ app.service('contentsService', function()
               {name: "Documentos",url:"documentos"},
               {name: "Areas",url:"areas"},
               {name: "Usuarios",url:"usuarios"},
-              {name: "Palabras clave",url:"keywords"}
+              {name: "Palabras clave",url:"keywords"},
+              {name: "Cambiar mi contraseña",url:"userSettings"}
 //              {name: "Búsqueda",url:"busqueda"}/*,
   //            {name: "Búsqueda",url:"busqueda"}/*,
     //          {name: "Tablas",url:"tablas"},
@@ -13,7 +14,8 @@ app.service('contentsService', function()
             var contentsAdministrator = [
               {name: "Documentos",url:"documentos"},
               {name: "Usuarios",url:"usuarios"},
-              {name: "Palabras clave",url:"keywords"}
+              {name: "Palabras clave",url:"keywords"},
+              {name: "Cambiar mi contraseña",url:"userSettings"}
 //              {name: "Búsqueda",url:"busqueda"}/*,
   //            {name: "Búsqueda",url:"busqueda"}/*,
     //          {name: "Tablas",url:"tablas"},
@@ -21,7 +23,8 @@ app.service('contentsService', function()
           ];
             var contentsNormal = [
               {name: "Documentos",url:"documentos"},
-              {name: "Palabras clave",url:"keywords"}
+              {name: "Palabras clave",url:"keywords"},
+              {name: "Cambiar mi contraseña",url:"userSettings"}
 //              {name: "Búsqueda",url:"busqueda"}/*,
   //            {name: "Búsqueda",url:"busqueda"}/*,
     //          {name: "Tablas",url:"tablas"},

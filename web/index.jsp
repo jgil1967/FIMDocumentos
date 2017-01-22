@@ -59,20 +59,21 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
        <script src="script/shared/dist/md-data-table.min.js" type="text/javascript"></script>
   
       <script src="script/app.js" type="text/javascript"></script>
+      <script src="script/service/topBannerService.js" type="text/javascript"></script>
       <script src="script/service/areasService.js" type="text/javascript"></script>
       <script src="script/service/contentsService.js" type="text/javascript"></script>
       <script src="script/service/keywordsService.js" type="text/javascript"></script>
       <script src="script/service/objectsService.js" type="text/javascript"></script>
       <script src="script/service/documentosService.js" type="text/javascript"></script>
-      <script src="script/service/topBannerService.js" type="text/javascript"></script>
+      
       <script src="script/service/tagsService.js" type="text/javascript"></script>
       <script src="script/service/documentKeywordRelationshipService.js" type="text/javascript"></script>
       <script src="script/service/usuariosService.js" type="text/javascript"></script>
+      <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/dialogControllers/usuarioDialogController.js" type="text/javascript"></script>
       <script src="script/controller/appController.js" type="text/javascript"></script>
       <script src="script/controller/keywordsController.js" type="text/javascript"></script>
       <script src="script/controller/controllerSideNavBar.js" type="text/javascript"></script>
-      <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/documentosController.js" type="text/javascript"></script>
       <script src="script/controller/searchController.js" type="text/javascript"></script>
     <!--Dialog controllers -->
@@ -81,6 +82,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <script src="script/controller/usuariosController.js" type="text/javascript"></script>
     <script src="script/controller/areasController.js" type="text/javascript"></script>
     <script src="script/controller/dialogControllers/areaDialogController.js" type="text/javascript"></script>
+    <script src="script/controller/userSettingsController.js" type="text/javascript"></script>
     <script>
          $(document).ready(function(){
              setTimeout(function(){ $('.collapsible').collapsible(); 
@@ -399,7 +401,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
 <!--document.fileDateDate -->
   <div class="input-field col ">
         <p>Fecha del documento</p>
-        <input required  id="date" class="datepicker" ng-model="document.fileDate" type="date" class="validate">
+        <input required  id="fileDate" class="datepicker" ng-model="document.fileDate" type="date" class="validate">
 
         </div>
 <!-------------------------------------------->
@@ -415,47 +417,21 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         </md-input-container>
  <br>
  <p><strong>Palabras clave</strong></p>
- <tags-input ng-model="tags" 
-                display-property="name" 
-                placeholder="Palabras clave" 
-                replace-spaces-with-dashes="false"
-                template="tag-template">
+ <tags-input ng-model="tags"  display-property="name" placeholder="Palabras clave" 
+                replace-spaces-with-dashes="false" template="tag-template">
       <auto-complete source="loadCountries($query)"
-                     min-length="0"
-                     load-on-focus="true"
-                     load-on-empty="true"
-                     max-results-to-show="32"
-                     template="autocomplete-template"></auto-complete>
+                     min-length="0" load-on-focus="true"load-on-empty="true"max-results-to-show="32" template="autocomplete-template"></auto-complete>
     </tags-input>
-    
- 
-       <br>
-        <!-------------------------------------------->
-            
-    <!-- <h5>File Upload with Jersey</h5>
-
-	<form action="api/hello/upload" method="post" enctype="multipart/form-data">
- -->
-	  
-
-	 <!--  <input type="submit" value="Upload It" /> -->
-	 <!-- </form> -->
-        <!-------------------------------------------->
-     
            <br>
    
-           <!-------------------------------------------->
-         
-          
-        <!-------------------------------------------->
         </form>
         </div>
         </md-dialog-content>
         <md-dialog-actions>
-        <button ng-if="!update" ng-disabled="formDocument.$invalid ||  document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoDocument()">Registrar
+        <button ng-if="!update" ng-disabled="document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoDocument()">Registrar
         <i class="material-icons right">send</i>
         </button>
-        <button ng-if="update" ng-disabled="formDocument.$invalid || document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editDocument()">Editar
+        <button ng-if="update" ng-disabled="document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editDocument()">Editar
         <i class="material-icons right">send</i>
         </button>
 

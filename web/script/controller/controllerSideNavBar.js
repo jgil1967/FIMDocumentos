@@ -6,16 +6,17 @@ app.controller('controllerSideNavBar', ['$scope','contentsService','$timeout', '
                 };
                 $scope.opciones = [];
                 setTimeout(function(){ $scope.loggedUser = usuariosService.getLoggedUser(); 
+                    $scope.$apply();
                  if ($scope.loggedUser.root==true){
-                       $scope.opciones = contentsService.getContentsRoot();
+                       $scope.opciones = contentsService.getContentsRoot();$scope.$apply();
                  }
                     if ($scope.loggedUser.isAdministrator==true && $scope.loggedUser.root==false){
                      
-                     $scope.opciones = contentsService.getContentsAdministrator();
+                     $scope.opciones = contentsService.getContentsAdministrator();$scope.$apply();
                  }
                  if ($scope.loggedUser.isAdministrator==false && $scope.loggedUser.root==false){
                      
-                     $scope.opciones = contentsService.getContentsNormal();
+                     $scope.opciones = contentsService.getContentsNormal();$scope.$apply();
                  }
                  
                 }, 100);

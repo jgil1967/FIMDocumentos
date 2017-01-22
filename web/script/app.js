@@ -19,7 +19,11 @@ app.config(function($routeProvider) {
                 controllerAs: 'ctrl',
                 controller  : 'documentosController'
             })
-            
+             .when('/userSettings', {
+                templateUrl : '/FIMDocumentos/pages/userSettings.html',
+                controllerAs: 'ctrl',
+                controller  : 'userSettingsController'
+            })
             .when('/documentos', {
                 templateUrl : '/FIMDocumentos/pages/documentos.html',
                 controllerAs: 'ctrl',
