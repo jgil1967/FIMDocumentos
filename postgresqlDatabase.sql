@@ -12,13 +12,13 @@
  Target Server Version : 90600
  File Encoding         : utf-8
 
- Date: 01/15/2017 23:03:08 PM
+ Date: 01/22/2017 06:12:11 AM
 */
 
 -- ----------------------------
 --  Sequence structure for object_id_seq
 -- ----------------------------
-CREATE SEQUENCE "object_id_seq" INCREMENT 1 START 158 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
+CREATE SEQUENCE "object_id_seq" INCREMENT 1 START 186 MAXVALUE 9223372036854775807 MINVALUE 1 CACHE 1;
 
 -- ----------------------------
 --  Table structure for usuario
@@ -37,15 +37,15 @@ WITH (OIDS=FALSE);
 --  Records of usuario
 -- ----------------------------
 BEGIN;
-INSERT INTO "usuario" VALUES ('124', 'root', 't', 't', '123', 't');
 INSERT INTO "usuario" VALUES ('136', 'tesorero', 't', 't', '127', 'f');
 INSERT INTO "usuario" VALUES ('139', 'secretaria', 'f', 't', '130', 'f');
 INSERT INTO "usuario" VALUES ('138', 'usuarioArea4', 'f', 't', '129', 'f');
 INSERT INTO "usuario" VALUES ('137', 'usuarioArea3', 'f', 't', '128', 'f');
 INSERT INTO "usuario" VALUES ('9', null, null, null, null, 'f');
 INSERT INTO "usuario" VALUES ('155', 'root2', 't', 't', '123', 't');
-INSERT INTO "usuario" VALUES ('125', 'coordinadoracademico', 't', 't', '126', 'f');
 INSERT INTO "usuario" VALUES ('140', 'direccion2', 't', 'f', '123', 'f');
+INSERT INTO "usuario" VALUES ('124', 'root', 't', 't', '123', 't');
+INSERT INTO "usuario" VALUES ('125', 'coordinadoracademico', 'f', 't', '126', 'f');
 COMMIT;
 
 -- ----------------------------
@@ -66,40 +66,36 @@ WITH (OIDS=FALSE);
 --  Records of object
 -- ----------------------------
 BEGIN;
-INSERT INTO "object" VALUES ('125', 'coordinadoracademico', null, '2017-01-10 21:23:09.250603', '124', null, null);
 INSERT INTO "object" VALUES ('140', 'direccion2', null, '2017-01-11 19:27:45.830832', '124', null, null);
 INSERT INTO "object" VALUES ('157', 'Area de superusuarios', null, '2017-01-15 19:44:41.615557', '124', null, null);
-INSERT INTO "object" VALUES ('126', 'Coodinación académica', null, '2017-01-10 21:39:51.234457', '124', null, null);
 INSERT INTO "object" VALUES ('128', 'Jefaturas de carrera', null, '2017-01-10 21:40:00.649318', '124', null, null);
 INSERT INTO "object" VALUES ('133', 'informe', null, '2017-01-11 09:34:12.118052', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('132', 'enero', null, '2017-01-11 09:34:12.109452', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('134', 'palabras', null, '2017-01-11 09:34:32.047557', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('137', 'usuarioArea3', '', '2017-01-11 19:19:22.243116', '124', null, null);
 INSERT INTO "object" VALUES ('138', 'usuarioArea4', '', '2017-01-11 19:20:12.925937', '124', null, null);
-INSERT INTO "object" VALUES ('131', 'informe2', 'informe2', '2017-01-11 09:34:11.999379', '124', '#01579b', 'document');
-INSERT INTO "object" VALUES ('141', 'documentousuarioArea2', 'usuarioArea2', '2017-01-11 22:08:42.189062', '136', '#01579b', 'document');
 INSERT INTO "object" VALUES ('142', 'area2', null, '2017-01-11 22:08:42.233543', '136', null, 'keyword');
 INSERT INTO "object" VALUES ('144', 'de area 5', null, '2017-01-11 22:14:58.413576', '139', null, 'keyword');
 INSERT INTO "object" VALUES ('139', 'secretaria', null, '2017-01-11 19:21:09.010166', '124', null, null);
-INSERT INTO "object" VALUES ('145', 'documento de tesorero', 'documento de tesorero', '2017-01-11 22:32:12.244339', '136', '#01579b', 'document');
 INSERT INTO "object" VALUES ('136', 'tesorero', null, '2017-01-11 19:15:57.637905', '124', null, null);
-INSERT INTO "object" VALUES ('147', 'informe servicio 11', 'descripcion de actividades', '2017-01-12 16:10:14.109167', '124', '#01579b', 'document');
 INSERT INTO "object" VALUES ('148', 'diciembre', null, '2017-01-12 16:10:14.173322', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('150', 'inteligencia artificial', null, '2017-01-12 16:35:21.29638', '124', null, 'keyword');
-INSERT INTO "object" VALUES ('149', 'documento 2', '"Estas tablas, como sus nombres sugieren, nos ayudan a guardar las relaciones entre las enfermedades con las medicinas, alergias y recomendación con las que están generalmente asociadas."', '2017-01-12 16:32:33.353433', '124', '#01579b', 'document');
 INSERT INTO "object" VALUES ('127', 'Coordinación administrativa', null, '2017-01-10 21:39:55.83921', '124', null, null);
 INSERT INTO "object" VALUES ('129', 'Tutorias', null, '2017-01-10 21:40:06.294055', '124', null, null);
 INSERT INTO "object" VALUES ('152', 'captura', null, '2017-01-12 17:17:20.586458', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('153', 'prueba', null, '2017-01-12 17:17:20.587463', '124', null, 'keyword');
 INSERT INTO "object" VALUES ('154', 'clave', null, '2017-01-12 17:18:09.788549', '124', null, 'keyword');
-INSERT INTO "object" VALUES ('151', 'Documento de prueba', 'Documento de prueba descripción', '2017-01-12 17:17:20.560097', '124', '#01579b', 'document');
-INSERT INTO "object" VALUES ('124', 'root', null, '2017-01-10 20:18:49.060262', '9', null, null);
 INSERT INTO "object" VALUES ('155', 'root2', '', '2017-01-15 11:24:12.97042', '124', null, null);
 INSERT INTO "object" VALUES ('156', 'abc2', null, '2017-01-15 18:41:54.172433', '124', null, 'keyword');
-INSERT INTO "object" VALUES ('143', 'de area 5', 'de area 5', '2017-01-11 22:14:58.381096', '139', '#01579b', 'document');
 INSERT INTO "object" VALUES ('146', 'documento', null, '2017-01-11 22:32:12.274006', '136', null, 'keyword');
 INSERT INTO "object" VALUES ('123', 'Dirección', null, '2017-01-10 20:18:27.652247', '9', null, null);
 INSERT INTO "object" VALUES ('130', 'Secretaria', null, '2017-01-10 21:40:11.575524', '124', null, null);
+INSERT INTO "object" VALUES ('160', 'tutorias', null, '2017-01-16 20:15:09.072381', '124', null, 'keyword');
+INSERT INTO "object" VALUES ('185', 'd1', 'd1', '2017-01-21 17:00:16.321775', '124', '#01579b', 'document');
+INSERT INTO "object" VALUES ('186', 'd2', 'd2', '2017-01-21 17:00:33.588267', '124', '#01579b', 'document');
+INSERT INTO "object" VALUES ('124', 'root', null, '2017-01-10 20:18:49.060262', '9', null, null);
+INSERT INTO "object" VALUES ('126', 'Coodinación académica', null, '2017-01-10 21:39:51.234457', '124', null, null);
+INSERT INTO "object" VALUES ('125', 'coordinadoracademico', null, '2017-01-10 21:23:09.250603', '124', null, null);
 COMMIT;
 
 -- ----------------------------
@@ -127,6 +123,7 @@ INSERT INTO "keyword" VALUES ('152');
 INSERT INTO "keyword" VALUES ('153');
 INSERT INTO "keyword" VALUES ('154');
 INSERT INTO "keyword" VALUES ('156');
+INSERT INTO "keyword" VALUES ('160');
 COMMIT;
 
 -- ----------------------------
@@ -144,13 +141,8 @@ WITH (OIDS=FALSE);
 --  Records of document
 -- ----------------------------
 BEGIN;
-INSERT INTO "document" VALUES ('131', 'Informe10_Noviembre.pdf', '2017-01-11', '123');
-INSERT INTO "document" VALUES ('141', 'Informe10_Noviembre.pdf', '2017-01-12', '127');
-INSERT INTO "document" VALUES ('145', 'Informe10_Noviembre.docx', '2017-01-12', '127');
-INSERT INTO "document" VALUES ('147', 'Informe11_Diciembre.docx', '2016-01-12', '123');
-INSERT INTO "document" VALUES ('149', 'Desarrollo – IA.docx', '2017-01-15', '129');
-INSERT INTO "document" VALUES ('151', 'Screen Shot 2017-01-10 at 1.44.48 PM.png', '2017-01-04', '126');
-INSERT INTO "document" VALUES ('143', 'Informe10_Noviembre.pdf', '2017-01-12', '130');
+INSERT INTO "document" VALUES ('185', 'Desarrollo – IA.docx', '2017-01-21', '157');
+INSERT INTO "document" VALUES ('186', 'Desarrollo – IA(1).docx', '2017-01-21', '157');
 COMMIT;
 
 -- ----------------------------
@@ -195,23 +187,6 @@ CREATE TABLE "documentKeywordRelationship" (
 WITH (OIDS=FALSE);
 
 -- ----------------------------
---  Records of documentKeywordRelationship
--- ----------------------------
-BEGIN;
-INSERT INTO "documentKeywordRelationship" VALUES ('133', '131');
-INSERT INTO "documentKeywordRelationship" VALUES ('133', '147');
-INSERT INTO "documentKeywordRelationship" VALUES ('150', '149');
-INSERT INTO "documentKeywordRelationship" VALUES ('152', '151');
-INSERT INTO "documentKeywordRelationship" VALUES ('156', '143');
-INSERT INTO "documentKeywordRelationship" VALUES ('132', '131');
-INSERT INTO "documentKeywordRelationship" VALUES ('142', '141');
-INSERT INTO "documentKeywordRelationship" VALUES ('146', '145');
-INSERT INTO "documentKeywordRelationship" VALUES ('148', '147');
-INSERT INTO "documentKeywordRelationship" VALUES ('154', '151');
-INSERT INTO "documentKeywordRelationship" VALUES ('144', '143');
-COMMIT;
-
--- ----------------------------
 --  Table structure for area
 -- ----------------------------
 CREATE TABLE "area" (
@@ -231,15 +206,15 @@ INSERT INTO "area" VALUES ('129', 'f', 't');
 INSERT INTO "area" VALUES ('123', 't', 't');
 INSERT INTO "area" VALUES ('130', 'f', 't');
 INSERT INTO "area" VALUES ('157', 't', 't');
-INSERT INTO "area" VALUES ('126', 'f', 'f');
 INSERT INTO "area" VALUES ('128', 'f', 'f');
+INSERT INTO "area" VALUES ('126', 'f', 't');
 COMMIT;
 
 
 -- ----------------------------
 --  Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "object_id_seq" RESTART 159 OWNED BY "object"."id";
+ALTER SEQUENCE "object_id_seq" RESTART 187 OWNED BY "object"."id";
 -- ----------------------------
 --  Primary key structure for table usuario
 -- ----------------------------
