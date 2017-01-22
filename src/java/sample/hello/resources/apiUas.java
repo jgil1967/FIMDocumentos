@@ -26,6 +26,7 @@ import com.uas.object.ObjectFacade;
 import com.uas.usuarios.UsuarioDTO;
 import com.uas.usuarios.UsuarioFacade;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -173,8 +175,8 @@ public class apiUas {
                     
                    double num = Math.pow(0.515367327881, 4);
                    double num2 = 0.515367327881 * 0.515367327881 * 0.515367327881 * 0.515367327881;
-                        System.out.println("num: "+ num);
-                                System.out.println("num2: "+ num2);
+                        //System.out.println("num: "+ num);
+                                //System.out.println("num2: "+ num2);
                 }
     
                @POST
@@ -201,7 +203,7 @@ public class apiUas {
      @Produces(MediaType.APPLICATION_JSON)
               @Path("/verificaDisponibilidadUsuario")
               public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception{
-                //  System.out.println("Hello api verificaDisponibilidadUsuario " );
+                //  //System.out.println("Hello api verificaDisponibilidadUsuario " );
                   uFac = new UsuarioFacade();
                   return uFac.verificaDisponibilidadUsuario(dto);
               }
@@ -256,7 +258,7 @@ public class apiUas {
     @Path("/createDocument")
     public DocumentDTO createDocument(DocumentDTO dDto) throws Exception
     {
-       // System.out.println("dDto : "+ dDto.toString());
+       // //System.out.println("dDto : "+ dDto.toString());
       oFac = new ObjectFacade();
        dDto.setId(oFac.createObject(dDto).getId()); 
        dFac = new DocumentFacade();
@@ -282,7 +284,7 @@ public class apiUas {
     @Path("/searchDocuments")
     public ArrayList<DocumentDTO> searchDocuments(DocumentDTO dDto) throws Exception
     {
-     // System.out.println("Hello: " + dDto.getQuery());
+     // //System.out.println("Hello: " + dDto.getQuery());
        dFac = new DocumentFacade();
        return  dFac.searchDocuments(dDto);
     }
@@ -292,7 +294,7 @@ public class apiUas {
     @Path("/createTag")
     public KeywordDTO createTag(KeywordDTO tag) throws Exception
     {
-     //   System.out.println("tag : "+ tag.toString());
+     //   //System.out.println("tag : "+ tag.toString());
        oFac = new ObjectFacade();
        tag.setId(oFac.createObject(tag).getId()); 
        kFac = new KeywordFacade();
@@ -304,7 +306,7 @@ public class apiUas {
     @Path("/updateKeyword")
     public KeywordDTO updateKeyword(KeywordDTO tag) throws Exception
     {
-     //   System.out.println("tag : "+ tag.toString());
+     //   //System.out.println("tag : "+ tag.toString());
        oFac = new ObjectFacade();
      oFac.updateObject(tag);
        return  tag;
@@ -361,7 +363,7 @@ public class apiUas {
     @Path("/downloadDocument/{filename}")
     public Response downloadDocument(@PathParam("filename") final String filename) throws Exception
     {
-        System.out.println("Filename : "+ filename);
+        //System.out.println("Filename : "+ filename);
      
        StreamingOutput fileStream =  new StreamingOutput() 
         {
@@ -370,7 +372,7 @@ public class apiUas {
             {
                 try
                 {
-                    java.nio.file.Path path = Paths.get("/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/"+filename);
+                    java.nio.file.Path path = Paths.get(returnPath()+filename);
                     byte[] data = Files.readAllBytes(path);
                     output.write(data);
                     output.flush();
@@ -396,8 +398,8 @@ public class apiUas {
     String nombreFinal = "";
     public String checkIfExistsAndReturnValid (String fileName, String name){
         
-              System.out.println("File existed : " + fileName);
-              System.out.println("File name : " + name);
+              //System.out.println("File existed : " + fileName);
+              //System.out.println("File name : " + name);
               nombreFinal = name;
                  File f = new File(fileName);
 
@@ -409,14 +411,14 @@ public class apiUas {
 int i = name.lastIndexOf('.');
 if (i > 0) {
     extension = name.substring(i+1);
-    System.out.println("i : " + i);
-    System.out.println("extension : " + extension);
+    //System.out.println("i : " + i);
+    //System.out.println("extension : " + extension);
     String nameASumar = name.substring(0,15);
-    System.out.println("fileDetail.getFileName() a sumar : " + nameASumar);
+    //System.out.println("fileDetail.getFileName() a sumar : " + nameASumar);
     String ruta = fileName.substring(0,fileName.lastIndexOf(name));
-    System.out.println("ruta :" + ruta); 
+    //System.out.println("ruta :" + ruta); 
     ruta =ruta + nameASumar+ "("+num+")"+"."+extension;
-    System.out.println("ruta nueva : " + ruta);
+    //System.out.println("ruta nueva : " + ruta);
     return checkIfExistsAndReturnValid (ruta,nameASumar+ "("+num+")"+"."+extension);
     
 }
@@ -429,6 +431,36 @@ if (i > 0) {
     }
     
     
+    
+    public String returnPath(){
+       // //System.out.println(new File(".").getAbsolutePath());
+	Properties prop = new Properties();
+	InputStream input = null;
+
+	try {
+
+		input = new FileInputStream("config.properties");
+
+		// load a properties file
+		prop.load(input);
+
+		// get the property value and print it out
+		return prop.getProperty("pathForFiles");
+
+	} catch (IOException ex) {
+		ex.printStackTrace();
+	} finally {
+		if (input != null) {
+			try {
+				input.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+        return null;
+    }
+    
         @POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -437,8 +469,8 @@ if (i > 0) {
 		@FormDataParam("file") FormDataContentDisposition fileDetail) {
         num=0;
         String output = "";
-		String uploadedFileLocation = "/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/" + fileDetail.getFileName();
-                
+		//String uploadedFileLocation = "/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/" + fileDetail.getFileName();
+               String uploadedFileLocation = returnPath() + fileDetail.getFileName();
               String rutaAGuardar =  checkIfExistsAndReturnValid(uploadedFileLocation,fileDetail.getFileName());
           ////////
                 writeToFile(uploadedInputStream, rutaAGuardar);
