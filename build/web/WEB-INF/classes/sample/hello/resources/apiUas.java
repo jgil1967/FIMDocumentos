@@ -266,6 +266,17 @@ public class apiUas {
      //  return null;
     }
     
+          @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/uploadAndEdit")      
+     public  areaRelationshipsDTO    uploadAndEdit (areaRelationshipsDTO dto)
+     {
+         
+         arFac = new areaRelationshipsFacade();
+         return arFac.uploadAndEdit(dto);
+      }
+      
             @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)

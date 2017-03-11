@@ -42,9 +42,12 @@ app.service('areasService',function($http){
     url: "/FIMDocumentos/FIMRest/hello/getAreasByArea2",
     data: JSON.stringify(area)
 }).then(function(response){
-     
+            
             areas = response.data;
-            areas.unshift(area);
+            area.uploadAndEdit = true;
+             areas.unshift(area);
+              //  window.console.log("Areas retornadas : " + JSON.stringify(areas));
+          
         });
          
     },
@@ -85,6 +88,15 @@ app.service('areasService',function($http){
  return  $http({
     method: 'POST',
     url: "/FIMDocumentos/FIMRest/hello/createAreaRelationship",
+    data: JSON.stringify(area)
+}).then(function(result){
+    
+            return result.data;
+        });  },
+     uploadAndEdit: function(area) {
+ return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/uploadAndEdit",
     data: JSON.stringify(area)
 }).then(function(result){
     

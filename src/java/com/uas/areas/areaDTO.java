@@ -12,8 +12,17 @@ import com.uas.object.ObjectDTO;
  * @author jonathangil
  */
 public class areaDTO extends ObjectDTO{
-    boolean superuser, enabled;
+   public boolean superuser, enabled;
+  public boolean uploadAndEdit;
 
+    public boolean isUploadAndEdit() {
+        return uploadAndEdit;
+    }
+
+    public void setUploadAndEdit(boolean uploadAndEdit) {
+        this.uploadAndEdit = uploadAndEdit;
+    }
+    
     public areaDTO() {
         superuser = false;
         enabled = true;

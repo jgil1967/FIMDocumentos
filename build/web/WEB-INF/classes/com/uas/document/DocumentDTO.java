@@ -28,7 +28,17 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
     int idArea;
     UsuarioDTO user;
     areaDTO area;
+    Boolean visible = true;
 
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
+    
+    
     public DocumentDTO() {
         user = new UsuarioDTO();
         area = new areaDTO();

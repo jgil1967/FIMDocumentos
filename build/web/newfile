@@ -1,1 +1,0 @@
-SELECT "area"."id", "object"."name" FROM "area" JOIN "object" ON "area"."id" = "object"."id" where "area"."id" not in ( SELECT "object"."id" FROM "areaRelationships" JOIN "object" ON "areaRelationships"."idArea2" = "object"."id" where "areaRelationships"."idArea1" = ? ) 

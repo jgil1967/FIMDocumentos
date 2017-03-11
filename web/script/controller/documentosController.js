@@ -16,65 +16,73 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
        $scope.selectedUsuarios= []; 
                 $scope.filteredDocuments = function () {
     return $scope.documents.filter(function (document) {
-      //return $scope.selectedAreas.indexOf(document.idArea) !== -1 && $scope.selectedUsuarios.indexOf(document.createdBy) !== -1;
-        return $scope.selectedAreas.indexOf(document.idArea) !== -1 ;
+       return $scope.selectedAreas.indexOf(document.idArea) !== -1 ;
     });
   };
-              
-              
-              
-               setTimeout(function(){
+              window.console.log("ENTRANDO A CONTROLADOR");
+                $scope.obteniendo = false; 
+              $scope.emptySelectedAreas = function (){
+                  $scope.selectedAreas=[];
+              }
+              $scope.setAllSelectedAreas  = function(){
+                $scope.selectedAreas=$scope.backup;
+              };
+              $scope.backup  = [];
+               setTimeout(function(){  
+                      if ($scope.obteniendo == false){
+                 $scope.obteniendo = true;
                    $scope.loggedUser = usuariosService.getLoggedUser(); 
-                  // window.console.log($scope.loggedUser);
-                   //window.console.log($scope.loggedUser.area.superuser);
                    if ($scope.loggedUser.area.superuser == false){
-                       
                      var area = {id:$scope.loggedUser.idArea,name:$scope.loggedUser.area.name};
                      areasService.getAreasByArea2(area).then(function(d) {
                    $scope.areas= areasService.getList();
-                   
+                        window.console.log($scope.areas);
                         angular.forEach($scope.areas, function (area, key) {
                        $scope.selectedAreas.push(area.id);
+                          $scope.backup.push(area.id);  
                    });
+                 
                    $scope.getDocumentsOnlyEnabled($scope.areas);  
                });    
                    }
                    else{
+                         $scope.getDocuments(); 
                            areasService.getAreas().then(function(d) {
                    $scope.areas= areasService.getList();
                         angular.forEach($scope.areas, function (area, key) {
                        $scope.selectedAreas.push(area.id);
+                            $scope.backup.push(area.id);  
                             });    
-                            $scope.getDocuments();  
+                         
                      });   
                        
                    }
                    
-               
-                }, 100);
+                }
+                  
+              } , 100);
                 
-              $scope.obteniendo = false; 
-              
-              
+            
+              //por esto entra dos veces wey
                 $scope.getDocumentsOnlyEnabled = function (areas){
-                    window.console.log(areas);
-             if ($scope.obteniendo == false){
+                   // window.console.log(areas);
+            
                  $scope.obteniendo = true;
                  documentosService.getDocumentsOnlyEnabled(areas).then(function(d) {
                         $scope.documents = documentosService.getList();
                         $scope.obteniendo = false;
+                        window.console.log($scope.documents );
                     });
-             }
                   
                  }; 
          $scope.getDocuments = function (){
-             if ($scope.obteniendo == false){
-                 $scope.obteniendo = true;
+           
                  documentosService.getDocuments().then(function(d) {
+                     window.console.log(   $scope.documents);
                         $scope.documents = documentosService.getList();
                         $scope.obteniendo = false;
                     });
-             }
+             
                   
                  };  
   

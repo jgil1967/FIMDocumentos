@@ -105,7 +105,7 @@ public class areaDAO implements areaInterface {
 
     @Override
     public ArrayList<areaDTO> getPossibleAreasByArea(areaDTO oDto) {
-        //System.out.println("oDto.id : " + oDto.getId());
+        
     ArrayList<areaDTO> list = null;
      areaDTO dto = null;
        getTomcatDataSource gd = new getTomcatDataSource();
@@ -156,9 +156,8 @@ public class areaDAO implements areaInterface {
 
     @Override
     public ArrayList<areaDTO> getAreasByArea(areaDTO oDto) {
-        
-        
-ArrayList<areaDTO> list = null;
+       
+      ArrayList<areaDTO> list = null;
      areaDTO dto = null;
        getTomcatDataSource gd = new getTomcatDataSource();
         ResultSet rs = null;
@@ -167,7 +166,7 @@ ArrayList<areaDTO> list = null;
        list = new ArrayList<areaDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"name\", \"object\".\"id\", \"areaRelationships\".\"idArea1\" FROM \"areaRelationships\" JOIN \"object\" ON \"areaRelationships\".\"idArea2\" = \"object\".\"id\" where \"areaRelationships\".\"idArea1\" = ? ";
+               String SQL = "SELECT \"object\".\"name\", \"object\".\"id\", \"areaRelationships\".\"idArea1\",\"areaRelationships\".\"uploadAndEdit\" FROM \"areaRelationships\" JOIN \"object\" ON \"areaRelationships\".\"idArea2\" = \"object\".\"id\" where \"areaRelationships\".\"idArea1\" = ? ";
                ps = c.prepareStatement(SQL);
                ps.setInt(1, oDto.getId());
                  rs = ps.executeQuery();
@@ -179,7 +178,7 @@ ArrayList<areaDTO> list = null;
                        dto = new areaDTO();
                        dto.setId(rs.getInt("id"));
                        dto.setName(rs.getString("name"));
-                      
+                      dto.setUploadAndEdit(rs.getBoolean("uploadAndEdit"));
                       list.add(dto);
                    }
          }
@@ -207,7 +206,7 @@ ArrayList<areaDTO> list = null;
     @Override
     public ArrayList<areaDTO> getAreasByArea2(areaDTO oDto) {
        
-        
+        System.out.println("oDto : " + oDto.getId());
 ArrayList<areaDTO> list = null;
      areaDTO dto = null;
        getTomcatDataSource gd = new getTomcatDataSource();
@@ -217,16 +216,19 @@ ArrayList<areaDTO> list = null;
        list = new ArrayList<areaDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"name\", \"object\".\"id\", \"areaRelationships\".\"idArea1\" FROM \"areaRelationships\" JOIN \"object\" ON \"areaRelationships\".\"idArea2\" = \"object\".\"id\" JOIN \"area\" ON \"areaRelationships\".\"idArea2\" = \"area\".\"id\" where \"areaRelationships\".\"idArea1\" = ? and \"area\".\"enabled\" = TRUE order by \"object\".\"name\" asc";
+               String SQL = "SELECT \"object\".\"name\", \"object\".\"id\", \"areaRelationships\".\"idArea1\",\"areaRelationships\".\"uploadAndEdit\" FROM \"areaRelationships\" JOIN \"object\" ON \"areaRelationships\".\"idArea2\" = \"object\".\"id\" JOIN \"area\" ON \"areaRelationships\".\"idArea2\" = \"area\".\"id\" where \"areaRelationships\".\"idArea1\" = ? and \"area\".\"enabled\" = TRUE order by \"object\".\"name\" asc";
                ps = c.prepareStatement(SQL);
                ps.setInt(1, oDto.getId());
                  rs = ps.executeQuery();
                    while (rs.next()) {
-                       
+                       System.out.println("rs.getInt(\"id\") : " + rs.getInt("id"));
                        dto = new areaDTO();
                        dto.setId(rs.getInt("id"));
+//                       if (rs.getInt("id") == oDto.getId()){
+//                           System.out.println("rs.getInt(\"id\") : " + rs.getInt("id"));
+//                       }
                        dto.setName(rs.getString("name"));
-                      
+                      dto.setUploadAndEdit(rs.getBoolean("uploadAndEdit"));
                       list.add(dto);
                    }
          }

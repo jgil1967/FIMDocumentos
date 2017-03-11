@@ -29,6 +29,7 @@ public class areaRelationshipsDAO implements areaRelationshipsInterface{
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, dto.getIdArea1());
          preparedStmt.setInt(2, dto.getIdArea2());   
+     
           preparedStmt.executeUpdate();
              
          
@@ -97,5 +98,48 @@ public class areaRelationshipsDAO implements areaRelationshipsInterface{
             }
         }
     return dto;}
+
+    @Override
+    public areaRelationshipsDTO uploadAndEdit(areaRelationshipsDTO dto) {
+        //update "public"."areaRelationships" set "uploadAndEdit"=? where "idArea1"=? and "idArea2"=? 
+     PreparedStatement preparedStmt = null;
+        Connection c = null;
+        ResultSet rs =null;
+        // getTomcatDataSource gd = new getTomcatDataSource();
+                 getTomcatDataSource gd = new getTomcatDataSource();
+         try {
+          c = gd.getTomcatDataSource().getConnection();
+          String SQL = "update \"public\".\"areaRelationships\" set \"uploadAndEdit\"=? where \"idArea1\"=? and \"idArea2\"=? ";
+     	preparedStmt = c.prepareStatement(SQL);
+         preparedStmt.setBoolean(1, dto.isUploadAndEdit());
+         preparedStmt.setInt(2, dto.getIdArea1());   
+         preparedStmt.setInt(3, dto.getIdArea2());   
+          preparedStmt.executeUpdate();
+             
+         
+         
+         }
+          catch (Exception e)
+            {
+        	e.printStackTrace();
+            }
+        finally{
+            try {
+               if (c != null) {
+                    c.close();
+                }
+                if (rs != null) {
+
+                    rs.close();
+                }
+                if (preparedStmt != null) {
+                    preparedStmt.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    return dto;
+    }
     
 }

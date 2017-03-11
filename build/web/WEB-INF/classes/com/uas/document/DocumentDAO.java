@@ -59,8 +59,8 @@ KeywordFacade kFac = null;
                     document.setFileDate(rs.getString("fileDate"));
                
                     document.setIdArea(rs.getInt("idArea"));
-               document.getArea().setName(rs.getString("nameArea"));
-               document.getUser().setName(rs.getString("nameCreatedBy"));
+                   document.getArea().setName(rs.getString("nameArea"));
+                   document.getUser().setName(rs.getString("nameCreatedBy"));
                       documents.add(document);
                    }
          }
@@ -370,9 +370,20 @@ KeywordFacade kFac = null;
         
         return documents;
     }
+    
+    public Boolean getVisible (int idArea, ArrayList<areaDTO> areas){
+        for (areaDTO a : areas){
+         if (a.getId() == idArea){
+             return a.isUploadAndEdit();
+         }   
+        }
+        return false;
+    }
+    
 //SELECT "object"."id", "object"."createdBy", "object"."name", "object"."description", "object"."createdOn", "object"."createdBy", "object"."color", "object"."kind", "document"."fileName", "document"."fileDate", "document"."idArea", "object2"."name" AS "nameCreatedBy", "object3"."name" AS "nameArea", "area"."enabled", "area"."enabled" FROM "document" JOIN "object" ON "document"."id" = "object"."id" JOIN "object" AS "object2" ON "object"."createdBy" = "object2"."id" JOIN "area" ON "document"."idArea" = "area"."id" JOIN "object" AS "object3" ON "area"."id" = "object3"."id" ORDER BY "object"."createdOn" ASC WHERE "area"."enabled" = TRUE
     @Override
     public ArrayList<DocumentDTO> getDocumentsOnlyEnabled(ArrayList<areaDTO> areas) {
+        System.out.println("areas : " + areas.size());
      kFac = new KeywordFacade ();
         ArrayList<DocumentDTO> documents = null;
      DocumentDTO document = null;
@@ -388,6 +399,7 @@ KeywordFacade kFac = null;
                  SQL = SQL + " AND ("; 
               }
                for (int a=0;a<areas.size();a++){
+                 //  System.out.println("area : " + areas.get(a).getName() + "  " + areas.get(a).isUploadAndEdit());
                   SQL = SQL + "\"document\".\"idArea\" = " + areas.get(a).getId();
                   if (!(a == areas.size()-1)){
                       SQL = SQL + " OR ";
@@ -397,7 +409,6 @@ KeywordFacade kFac = null;
                   }
               }
                ps = c.prepareStatement(SQL);
-              // System.out.println("SQL : " + SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
                        document = new DocumentDTO();
@@ -411,8 +422,9 @@ KeywordFacade kFac = null;
                         document.setFilename(rs.getString("filename"));
                         document.setKeywords(kFac.getKeywordsByDocument(document));
                     document.setFileDate(rs.getString("fileDate"));
-               
+         
                     document.setIdArea(rs.getInt("idArea"));
+                         document.setVisible(getVisible(rs.getInt("idArea"), areas));
                document.getArea().setName(rs.getString("nameArea"));
                document.getUser().setName(rs.getString("nameCreatedBy"));
                       documents.add(document);

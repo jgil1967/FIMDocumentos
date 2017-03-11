@@ -13,6 +13,16 @@ import java.io.Serializable;
  */
 public class areaRelationshipsDTO implements Serializable {
     int idArea1,idArea2;
+    boolean uploadAndEdit;
+
+    public boolean isUploadAndEdit() {
+        return uploadAndEdit;
+    }
+
+    public void setUploadAndEdit(boolean uploadAndEdit) {
+        this.uploadAndEdit = uploadAndEdit;
+    }
+    
 
     public int getIdArea1() {
         return idArea1;

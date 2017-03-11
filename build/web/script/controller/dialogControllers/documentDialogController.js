@@ -6,12 +6,30 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
         }, function (document) {
 
             if (usuariosService.getLoggedUser() != null) {
-                // window.console.log("Hello");
+                
                 $scope.loggedUser = usuariosService.getLoggedUser();
-                // window.console.log(JSON.stringify($scope.loggedUser));
+                    $scope.areasFiltradas= [];
                 var area = {id: $scope.loggedUser.idArea, name: $scope.loggedUser.area.name};
                 
                     $scope.areas = areasService.getList();
+                     window.console.log($scope.loggedUser);
+                    window.console.log($scope.areas);
+                    if (!$scope.loggedUser.area.superuser){
+                         angular.forEach($scope.areas, function (area, key) {
+                        
+                      if (area.uploadAndEdit == true){
+                            $scope.areasFiltradas.push(area);
+                      }
+                   });
+                    }
+                    else{
+                        $scope.areasFiltradas = $scope.areas;
+                    }
+              
+                   
+                    
+                    
+                    
                     if (document != "") {
                         if (document.id == 0) {
 
@@ -25,7 +43,7 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                 locals: {
                                     document: document,
                                     update: false,
-                                    areas: $scope.areas,
+                                    areas: $scope.areasFiltradas,
                                     fileUpload: fileUpload
                                 }
                             });
@@ -42,7 +60,7 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                 locals: {
                                     document: document,
                                     update: true,
-                                    areas: $scope.areas,
+                                    areas: $scope.areasFiltradas,
                                     fileUpload: fileUpload
                                 }
                             });
@@ -56,6 +74,11 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
 
         function documentDialogController($scope, $http, $timeout, $q, documentosService, document, update, areas, fileUpload, tagsService, documentKeywordRelationshipService)
         {
+            
+            $scope.shouldShow = function (area) {
+  // put your authorization logic here
+  return area.uploadAndEdit == true ;
+}
 
             setTimeout(function () {
 

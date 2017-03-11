@@ -67,11 +67,22 @@
         });
     }
     
+    
+    //
+     $scope.uploadAndEdit = function (a){
+           var ar = {idArea1:$scope.area.id,idArea2: a.id,uploadAndEdit:a.uploadAndEdit };
+                areasService.uploadAndEdit(ar).then(function(d) {
+           //$scope.getAreasAndStuff ();
+        });
+    
+     }
     $scope.deleteAreaRelationship = function (a){
         var ar = {idArea1:$scope.area.id,idArea2: a.id };
+        
         areasService.deleteAreaRelationship(ar).then(function(d) {
            $scope.getAreasAndStuff ();
         });
+    
     };
     
               $scope.update = update;

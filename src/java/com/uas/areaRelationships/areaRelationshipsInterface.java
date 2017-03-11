@@ -12,4 +12,5 @@ package com.uas.areaRelationships;
 public interface areaRelationshipsInterface {
     public areaRelationshipsDTO createAreaRelationship (areaRelationshipsDTO dto);
     public areaRelationshipsDTO deleteAreaRelationship (areaRelationshipsDTO dto);
+    public  areaRelationshipsDTO    uploadAndEdit (areaRelationshipsDTO dto);
 }

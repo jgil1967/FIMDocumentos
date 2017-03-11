@@ -1,4 +1,4 @@
-<div class="col s12 m12" ng-controller="documentosController" >
+<div class="col s12 m12"  >
      <md-toolbar class="md-theme-light" >
     <h2 class="md-toolbar-tools">
       <span>Documentos</span>
@@ -24,8 +24,13 @@
       <div class="collapsible-body">
             <div style="font-weight: bold;">Areas</div>
       <md-input-container >
-        <md-select ng-model="selectedAreas" multiple style="min-width: 100%;  width: 100vw; display: inline-block;" aria-label="selected areas">
-          <md-optgroup label="Areas">
+<!--          <md-button  class="md-primary md-raised"  ng-click="selectedAreas=backup; setAllSelectedAreas();">Todas las áreas</md-button>
+<md-button  class="md-primary md-raised"  ng-click="selectedAreas=[]; emptySelectedAreas();">Ningún área</md-button>
+ -->
+
+<md-select ng-model="selectedAreas" multiple style="min-width: 100%;  width: 100vw; display: inline-block;" aria-label="selected areas">
+         
+            <md-optgroup label="Areas">
             <md-option  ng-value="area.id" ng-repeat="area in areas ">{{area.name}}</md-option>
           </md-optgroup>
         </md-select>
@@ -103,7 +108,7 @@
      <td md-cell>{{document.area.name}}</td>
      <td md-cell>{{document.user.name}}</td>
      <td md-cell>    
-           <md-button ng-click="updateDocument($event,document)" class="md-fab md-primary" aria-label="Editar">
+           <md-button ng-show="document.visible" ng-click="updateDocument($event,document)" class="md-fab md-primary" aria-label="Editar">
        <i class="material-icons">border_color</i>
         </md-button>
          </td>

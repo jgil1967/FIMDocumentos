@@ -238,23 +238,29 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
       <tr md-row>
         <th md-column md:order:by="name"><span>Nombre</span></th>
+            <th md-column ><span>Puede subir y editar</span></th>
         <th md-column ><span>Quitar</span></th>
+     
        
         
       </tr>
     </thead>
     <tbody md-body>
+    
       <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="area in areasByArea| filter:searchAreas | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
      <td md-cell>{{ area.name| limitTo: 20 }}{{area.name.length > 20 ? '...' : ''}}</td>
-         <td md-cell>    
+           <td md-cell>
+                <md-switch ng-model="area.uploadAndEdit" aria-label="Habilitado" ng-change="uploadAndEdit(area)">
+     </md-switch>
+ </td>
+        
+            <td md-cell>    
        <md-button ng-click="deleteAreaRelationship(area)" class="md-fab md-primary" aria-label="Quitar">
        <i class="material-icons">clear</i>
         </md-button>
          </td>
-     
-     
-    
- 
+
+        
       </tr>
     </tbody>
   </table>
@@ -410,6 +416,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
           <label>Areas</label>
           <md-select ng-model="document.idArea">
 <!--            <md-option><em>None</em></md-option> -->
+<!--ng-show="shouldShow(area)"-->
             <md-option ng-repeat="area in areas" ng-value="area.id" >
               {{area.name}}
             </md-option>

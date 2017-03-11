@@ -24,5 +24,9 @@ areaRelationshipsInterface aDao = null;
     @Override
     public areaRelationshipsDTO deleteAreaRelationship(areaRelationshipsDTO dto) {
    return aDao.deleteAreaRelationship(dto); }
+
+    @Override
+    public areaRelationshipsDTO uploadAndEdit(areaRelationshipsDTO dto) {
+   return aDao.uploadAndEdit(dto);  }
     
 }
