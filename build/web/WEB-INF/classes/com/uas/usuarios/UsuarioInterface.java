@@ -15,7 +15,7 @@ public interface UsuarioInterface {
      UsuarioDTO createUsuario (UsuarioDTO oDto);
      UsuarioDTO getUsuarioByID (UsuarioDTO dto);
      UsuarioDTO updateUsuario (UsuarioDTO oDto);
-     ArrayList <UsuarioDTO> obtenerUsuariosForRoot ();
+     ArrayList <UsuarioDTO> obtenerUsuariosForRoot (UsuarioDTO dto);
      ArrayList <UsuarioDTO> obtenerUsuariosForAdministrator ();
      public UsuarioDTO iniciarSesion(UsuarioDTO dto) throws Exception;
      public UsuarioDTO verificaDisponibilidadUsuario(UsuarioDTO dto) throws Exception;

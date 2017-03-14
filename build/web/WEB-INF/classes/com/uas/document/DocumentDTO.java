@@ -28,7 +28,33 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
     int idArea;
     UsuarioDTO user;
     areaDTO area;
-    Boolean visible = true;
+    Boolean visible = true, deleted = false,backedUp=false, isFolder=false;
+    int idUsuario;
+
+    public Boolean getIsFolder() {
+        return isFolder;
+    }
+
+    public void setIsFolder(Boolean isFolder) {
+        this.isFolder = isFolder;
+    }
+    
+
+    public Boolean getBackedUp() {
+        return backedUp;
+    }
+
+    public void setBackedUp(Boolean backedUp) {
+        this.backedUp = backedUp;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 
     public Boolean getVisible() {
         return visible;
@@ -108,6 +134,14 @@ public class DocumentDTO extends ObjectDTO implements Serializable {
 
     public void setArea(areaDTO area) {
         this.area = area;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
    

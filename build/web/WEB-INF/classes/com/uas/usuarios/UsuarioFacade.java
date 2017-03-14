@@ -27,8 +27,8 @@ UsuarioInterface uDao = null;
     }
 
     @Override
-    public ArrayList<UsuarioDTO> obtenerUsuariosForRoot() {
-   return uDao.obtenerUsuariosForRoot();}
+    public ArrayList<UsuarioDTO> obtenerUsuariosForRoot(UsuarioDTO dto) {
+   return uDao.obtenerUsuariosForRoot(dto);}
 
     @Override
     public UsuarioDTO updateUsuario(UsuarioDTO oDto) {

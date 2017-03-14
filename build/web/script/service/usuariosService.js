@@ -25,11 +25,20 @@ app.service('usuariosService',function($http){
             return loggedUser;
             },
         
-         getUsuarios: function() {
-      var promise = $http.get('/FIMDocumentos/FIMRest/hello/getUsuarios').then(function (response) {
-      usuarios = response.data;
-      });
-      return promise;
+         getUsuarios: function(usuario) {
+             window.console.log(usuario);
+             
+       return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/getUsuarios",
+    data: JSON.stringify(usuario)
+}).then(function(result){
+    
+          usuarios = result.data;
+            
+        });  
+        
+             
     },
     getUsuariosForAdministrator: function() {
       var promise = $http.get('/FIMDocumentos/FIMRest/hello/getUsuariosForAdministrator').then(function (response) {

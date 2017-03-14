@@ -7,6 +7,8 @@ package com.uas.usuarios;
 
 
 import com.uas.dbutil.getTomcatDataSource;
+import com.uas.transactionRecord.TransactionRecordDTO;
+import com.uas.transactionRecord.TransactionRecordFacade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,8 +27,7 @@ public class UsuarioDAO implements UsuarioInterface{
      PreparedStatement preparedStmt = null;
         Connection c = null;
         ResultSet rs =null;
-        // getTomcatDataSource gd = new getTomcatDataSource();
-                 getTomcatDataSource gd = new getTomcatDataSource();
+        getTomcatDataSource gd = new getTomcatDataSource();
          try {
           c = gd.getTomcatDataSource().getConnection();
           String SQL = "INSERT INTO \"public\".\"usuario\" (\"id\",\"contraseña\",\"isAdministrator\",\"enabled\",\"idArea\",\"root\") VALUES (?,?,?,?,?,?)";
@@ -38,9 +39,12 @@ public class UsuarioDAO implements UsuarioInterface{
             preparedStmt.setInt(5, oDto.getArea().getId());
             preparedStmt.setBoolean(6, oDto.getRoot());
           preparedStmt.executeUpdate();
-             
-         
-         
+            TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(oDto.getId());
+             tDto.getTransactionTypeDTO().setId(7);
+             tDto.getUsuarioDTO().setId(oDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          }
           catch (Exception e)
             {
@@ -81,9 +85,6 @@ public class UsuarioDAO implements UsuarioInterface{
                 ps.setString(2, dto.getContrasena());
                rs = ps.executeQuery();
                    while (rs.next()) {
-                     
-                     
-                         
                        objeto = new UsuarioDTO();
                        objeto.setId(rs.getInt("id"));
                        objeto.setName(rs.getString("name"));
@@ -91,8 +92,6 @@ public class UsuarioDAO implements UsuarioInterface{
                        objeto.setIsAdministrator(rs.getBoolean("isAdministrator"));
                        objeto.setRoot(rs.getBoolean("root"));
                       lista.add(objeto);   
-                     
-                      
                    }
                  
                  
@@ -124,7 +123,7 @@ public class UsuarioDAO implements UsuarioInterface{
     }
 
     @Override
-    public ArrayList<UsuarioDTO> obtenerUsuariosForRoot() {
+    public ArrayList<UsuarioDTO> obtenerUsuariosForRoot(UsuarioDTO uDto) {
        
         ArrayList<UsuarioDTO> list = null;
      UsuarioDTO dto = null;
@@ -136,6 +135,9 @@ public class UsuarioDAO implements UsuarioInterface{
          try{
                c = gd.getTomcatDataSource().getConnection();
                String SQL = "SELECT \"usuario\".\"id\",\"usuario\".\"root\", \"usuario\".\"contraseña\", \"usuario\".\"idArea\", \"usuario\".\"isAdministrator\", \"usuario\".\"enabled\", \"object\".\"name\", \"object\".\"createdBy\", \"object2\".\"name\" AS \"nameArea\" FROM \"usuario\" JOIN \"object\" ON \"usuario\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object2\" ON \"usuario\".\"idArea\" = \"object2\".\"id\"";
+               if  (!uDto.getName().equals("root0")){
+                   SQL = SQL + "WHERE  \"object\".\"name\" != 'root0'";
+               }
                ps = c.prepareStatement(SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
@@ -195,7 +197,12 @@ public class UsuarioDAO implements UsuarioInterface{
             preparedStmt.setInt(6, oDto.getId());
             
           preparedStmt.executeUpdate();
-             
+              TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(oDto.getId());
+             tDto.getTransactionTypeDTO().setId(8);
+             tDto.getUsuarioDTO().setId(oDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          
          
          }

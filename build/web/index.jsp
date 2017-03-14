@@ -38,6 +38,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <link href="icons/icon.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/flaticon.css" rel="stylesheet" type="text/css"/>
     <link href="assets/css/styleArticle.css" rel="stylesheet" type="text/css"/>
+    <link href="script/shared/loading-bar.min.css" rel="stylesheet" type="text/css"/>
     <link href="script/shared/dist/md-data-table.min.css" rel="stylesheet" type="text/css"/>
     <link href="script/ng-tags-input.min/ng-tags-input.min.css" rel="stylesheet" type="text/css"/>
     
@@ -57,7 +58,7 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
        <script src="script/shared/angular-messages.min.js" type="text/javascript"></script>
        <script src="script/shared/angular-material.min.js" type="text/javascript"></script>
        <script src="script/shared/dist/md-data-table.min.js" type="text/javascript"></script>
-  
+       <script src="script/shared/loading-bar.min.js" type="text/javascript"></script>
       <script src="script/app.js" type="text/javascript"></script>
       <script src="script/service/topBannerService.js" type="text/javascript"></script>
       <script src="script/service/areasService.js" type="text/javascript"></script>
@@ -65,10 +66,13 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
       <script src="script/service/keywordsService.js" type="text/javascript"></script>
       <script src="script/service/objectsService.js" type="text/javascript"></script>
       <script src="script/service/documentosService.js" type="text/javascript"></script>
-      
+      <script src="script/service/databaseBackupService.js" type="text/javascript"></script>
+      <script src="script/service/documentsBackupService.js" type="text/javascript"></script>
       <script src="script/service/tagsService.js" type="text/javascript"></script>
       <script src="script/service/documentKeywordRelationshipService.js" type="text/javascript"></script>
       <script src="script/service/usuariosService.js" type="text/javascript"></script>
+      <script src="script/service/documentsBackupService.js" type="text/javascript"></script>
+      <script src="script/service/transactionsService.js" type="text/javascript"></script>
       <script src="script/controller/topBannerController.js" type="text/javascript"></script>
       <script src="script/controller/dialogControllers/usuarioDialogController.js" type="text/javascript"></script>
       <script src="script/controller/appController.js" type="text/javascript"></script>
@@ -83,6 +87,11 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
     <script src="script/controller/areasController.js" type="text/javascript"></script>
     <script src="script/controller/dialogControllers/areaDialogController.js" type="text/javascript"></script>
     <script src="script/controller/userSettingsController.js" type="text/javascript"></script>
+    <script src="script/controller/subidospormiController.js" type="text/javascript"></script>
+    <script src="script/controller/databaseBackupController.js" type="text/javascript"></script>
+    <script src="script/controller/documentsBackupController.js" type="text/javascript"></script>
+    <script src="script/controller/transactionsController.js" type="text/javascript"></script>
+    <script src="script/shared/angular-materialize.min.js" type="text/javascript"></script>
     <script>
          $(document).ready(function(){
              setTimeout(function(){ $('.collapsible').collapsible(); 
@@ -104,8 +113,8 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         
         
         <input type="hidden" value="${idUsuario}" id="idUsuario" name="idUsuario">
-        
-        <div ng-controller="documentDialogController"></div>
+          <div ng-controller="documentDialogController"></div>
+        <div ng-controller="documentsBackupController"></div>
         <div ng-controller="usuarioDialogController"></div>
         <div ng-controller="keywordDialogController"></div>
         <div ng-controller="areaDialogController"></div>
@@ -130,6 +139,41 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         </div>
       </div>
     </script>
+    
+      <script type="text/ng-template" id="documentBackupRequestDialog.tmpl.html">
+   <md-dialog aria-label="Google Drive Request" ng-cloak>
+        <md-toolbar>
+        <div class="md-toolbar-tools">
+      
+         <h2>Generando respaldo de documentos en Google Drive</h2>
+        <span flex></span>
+        
+        
+        
+        </div>
+        </md-toolbar>
+   <md-dialog-content>
+     <div class="md-dialog-content" style="min-height:400px;">
+     
+     
+      <div class="preloader-wrapper big active" style=" position: absolute;top :0;left: 0;right: 0;bottom: 0;margin: auto; ">
+    <div class="spinner-layer spinner-blue-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+     
+   
+      
+     </md-dialog-content>
+        </md-dialog>
+    </script>
+    
      <script type="text/ng-template" id="keywordDialog.tmpl.html">
    <md-dialog aria-label="Keyword" ng-cloak>
         <md-toolbar>
@@ -370,6 +414,82 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         </md-dialog>
     </script>
     
+      <!--    ############ INICIO  FOLDER    ########### -->
+    
+    <script type="text/ng-template" id="documentDialogFolder.tmpl.html">
+   <md-dialog aria-label="Documento" ng-cloak>
+        <md-toolbar>
+        <div class="md-toolbar-tools">
+        <h2  ng-if="!update">Nueva carpeta</h2>
+         <h2 ng-if="update">Editar carpeta</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+        <md-icon md-svg-src="icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+        </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+        <div class="md-dialog-content">
+        <form ng-submit="$event.preventDefault()" novalidate name="formDocument">
+        <!-------------------------------------------->
+
+   
+        <div class="input-field col s12" style="padding-top: 5px;padding-bottom: 5px;">
+        <input md-autofocus autofocus  required  id="name" ng-model="document.name" type="text" class="validate">
+        <label for="name">Nombre (campo obligatorio) </label>
+        </div>
+<!-------------------------------------------->
+        <div class="input-field col ">
+        <label  ng-if="!update" for="description">Descripción  (campo obligatorio)</label>
+        <textarea  id="description" ng-model="document.description"   class="materialize-textarea" class="validate" required></textarea>
+
+        </div>
+<!--document.fileDateDate -->
+  <div class="input-field col ">
+        <p>Fecha de la carpeta</p>
+        <input required  id="fileDate" class="datepicker" ng-model="document.fileDate" type="date" class="validate">
+
+        </div>
+<!-------------------------------------------->
+<br>
+  <md-input-container>
+          <label>Areas</label>
+          <md-select ng-model="document.idArea">
+<!--            <md-option><em>None</em></md-option> -->
+<!--ng-show="shouldShow(area)"-->
+            <md-option ng-repeat="area in areas" ng-value="area.id" >
+              {{area.name}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+ <br>
+ <p><strong>Palabras clave</strong></p>
+ <tags-input ng-model="tags"  display-property="name" placeholder="Palabras clave" 
+                replace-spaces-with-dashes="false" template="tag-template">
+      <auto-complete source="loadCountries($query)"
+                     min-length="0" load-on-focus="true"load-on-empty="true"max-results-to-show="32" template="autocomplete-template"></auto-complete>
+    </tags-input>
+           <br>
+   
+        </form>
+        </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+        <button ng-if="!update" ng-disabled="document.idArea==0 || trabajando == true" class="btn waves-effect waves-light" type="submit" name="action"   ng-click="nuevoDocumentFolder()">Registrar
+        <i class="material-icons right">send</i>
+        </button>
+        <button ng-if="update" ng-disabled="document.idArea==0 || trabajando == true" class="btn waves-effect waves-light" type="submit" name="action"   ng-click="editDocumentFolder()">Editar
+        <i class="material-icons right">send</i>
+        </button>
+
+        </md-dialog-actions>
+        </md-dialog>
+    </script>
+    <!--    ############  FIN FOLDER    ########### -->
+    
+<!--    ####################### -->
+    
           <script type="text/ng-template" id="documentDialog.tmpl.html">
    <md-dialog aria-label="Documento" ng-cloak>
         <md-toolbar>
@@ -435,16 +555,18 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
         </div>
         </md-dialog-content>
         <md-dialog-actions>
-        <button ng-if="!update" ng-disabled="document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="nuevoDocument()">Registrar
+        <button ng-if="!update" ng-disabled="document.idArea==0 || trabajando == true" class="btn waves-effect waves-light" type="submit" name="action"   ng-click="nuevoDocument()">Registrar
         <i class="material-icons right">send</i>
         </button>
-        <button ng-if="update" ng-disabled="document.idArea==0" class="btn waves-effect waves-light" type="submit" name="action"  ng-click="editDocument()">Editar
+        <button ng-if="update" ng-disabled="document.idArea==0 || trabajando == true" class="btn waves-effect waves-light" type="submit" name="action"   ng-click="editDocument()">Editar
         <i class="material-icons right">send</i>
         </button>
 
         </md-dialog-actions>
         </md-dialog>
     </script>
+    
+<!-- ############   TEMPLATE DOCUMENTS ################-->
         <header>
       <div class="container">
     <a href="#" data-activates="nav-mobile" class="button-collapse top-nav waves-effect waves-paquetexpress circle hide-on-large-only"><i class="material-icons">menu</i></a>
@@ -497,6 +619,8 @@ String idUsuario =  session.getAttribute("idUsuario").toString();
           <h5 class="header">{{title}}</h5> 
           
              </div>
+            <marquee scrollamount="10" ng-show="loggedUser.root" style="color:white;">{{mensaje}}</marquee>
+
           <br>
 
         </div>

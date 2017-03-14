@@ -5,7 +5,7 @@
  */
 
 
-var app = angular.module('appApp', ['ngRoute','ngMaterial', 'ngMessages','md.data.table','ngTagsInput'])
+var app = angular.module('appApp', ['ngRoute','ngMaterial', 'ngMessages','md.data.table','ngTagsInput','ui.materialize','angular-loading-bar'])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
     .primaryPalette('blue')
@@ -17,22 +17,44 @@ app.config(function($routeProvider) {
             .when('/', {
                 templateUrl : '/FIMDocumentos/pages/documentos.html',
                 controllerAs: 'ctrl',
-                controller  : 'documentosController'
+                controller  : ''
             })
              .when('/userSettings', {
                 templateUrl : '/FIMDocumentos/pages/userSettings.html',
                 controllerAs: 'ctrl',
                 controller  : 'userSettingsController'
             })
-            .when('/documentos', {
+            
+               .when('/transactions', {
+                templateUrl : '/FIMDocumentos/pages/transactions.html',
+                controllerAs: 'ctrl',
+                controller  : 'transactionsController'
+            })
+             .when('/databaseBackup', {
+                templateUrl : '/FIMDocumentos/pages/databaseBackup.html',
+                controllerAs: 'ctrl',
+                controller  : 'databaseBackupController'
+            })
+            
+            .when('/documentsBackup', {
+                templateUrl : '/FIMDocumentos/pages/documentsBackup.html',
+                controllerAs: 'ctrl',
+                controller  : 'documentsBackupController'
+            })
+              .when('/documentos', {
                 templateUrl : '/FIMDocumentos/pages/documentos.html',
                 controllerAs: 'ctrl',
-                controller  : 'documentosController'
+                controller  : ''
             })
               .when('/usuarios', {
                 templateUrl : '/FIMDocumentos/pages/usuarios.html',
                 controllerAs: 'ctrl',
                 controller  : 'usuariosController'
+            })
+             .when('/subidospormi', {
+                templateUrl : '/FIMDocumentos/pages/subidospormi.html',
+                controllerAs: 'ctrl',
+                controller  : 'subidospormiController'
             })
             .when('/keywords', {
                 templateUrl : '/FIMDocumentos/pages/keywords.html',

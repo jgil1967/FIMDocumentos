@@ -7,6 +7,8 @@ package com.uas.keyword;
 
 import com.uas.dbutil.getTomcatDataSource;
 import com.uas.document.DocumentDTO;
+import com.uas.transactionRecord.TransactionRecordDTO;
+import com.uas.transactionRecord.TransactionRecordFacade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,7 +33,12 @@ public class KeywordDAO implements KeywordInterface {
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, dDto.getId());
              preparedStmt.executeUpdate();
-             
+              TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dDto.getId());
+             tDto.getTransactionTypeDTO().setId(5);
+             tDto.getUsuarioDTO().setId(dDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          
          }
           catch (Exception e)

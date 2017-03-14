@@ -7,6 +7,7 @@ package com.uas.document;
 
 import com.uas.areas.areaDTO;
 import com.uas.dates.filters.filtersDTO.FiltersDTO;
+import com.uas.usuarios.UsuarioDTO;
 import java.util.ArrayList;
 
 /**
@@ -21,4 +22,5 @@ public interface DocumentInterface {
        DocumentDTO createDocument(DocumentDTO dDto);
      DocumentDTO updateDocument(DocumentDTO dDto);
        ArrayList <DocumentDTO> searchDocuments (DocumentDTO oDto);
+        ArrayList<DocumentDTO> getDocumentsByUser(UsuarioDTO dto) ;
 }

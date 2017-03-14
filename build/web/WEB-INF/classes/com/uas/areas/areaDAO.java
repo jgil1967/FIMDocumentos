@@ -6,6 +6,8 @@
 package com.uas.areas;
 
 import com.uas.dbutil.getTomcatDataSource;
+import com.uas.transactionRecord.TransactionRecordDTO;
+import com.uas.transactionRecord.TransactionRecordFacade;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,8 +35,12 @@ public class areaDAO implements areaInterface {
          preparedStmt.setBoolean(2, dto.isSuperuser());   
          preparedStmt.setBoolean(3, dto.isEnabled());   
           preparedStmt.executeUpdate();
-             
-         
+             TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dto.getId());
+             tDto.getTransactionTypeDTO().setId(1);
+             tDto.getUsuarioDTO().setId(dto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          
          }
           catch (Exception e)
@@ -271,7 +277,12 @@ ArrayList<areaDTO> list = null;
          preparedStmt.setInt(3, dto.getId());   
           preparedStmt.executeUpdate();
              
-         
+          TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dto.getId());
+             tDto.getTransactionTypeDTO().setId(2);
+             tDto.getUsuarioDTO().setId(dto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          
          }
           catch (Exception e)

@@ -76,11 +76,5 @@ app.controller('searchController', ['$scope','$routeParams','topBannerService','
            
        }, true);
         
-//       $scope.$watch(function(){return objectsService.getSearchResults();},
-//       function (results) 
-//       { window.console.log(results.length);
-//       }, true);
-//Ø       
-                 
-               
+         
     }]);

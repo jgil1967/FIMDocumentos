@@ -9,6 +9,9 @@ import com.uas.areas.areaDTO;
 import com.uas.dates.filters.filtersDTO.FiltersDTO;
 import com.uas.dbutil.getTomcatDataSource;
 import com.uas.keyword.KeywordFacade;
+import com.uas.transactionRecord.TransactionRecordDTO;
+import com.uas.transactionRecord.TransactionRecordFacade;
+import com.uas.usuarios.UsuarioDTO;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -42,11 +45,12 @@ KeywordFacade kFac = null;
        documents = new ArrayList<DocumentDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"id\",\"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"idArea\", \"object3\".\"name\" AS \"nameArea\", \"object2\".\"name\" AS \"nameCreatedBy\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" ORDER BY \"object\".\"createdOn\" ASC";
+               String SQL = "SELECT \"object\".\"id\",\"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"isFolder\", \"document\".\"fileDate\", \"document\".\"deleted\", \"document\".\"backedUp\", \"document\".\"idArea\", \"object3\".\"name\" AS \"nameArea\", \"object2\".\"name\" AS \"nameCreatedBy\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" ORDER BY \"object\".\"createdOn\" ASC";
                ps = c.prepareStatement(SQL);
                  rs = ps.executeQuery();
                    while (rs.next()) {
                        document = new DocumentDTO();
+                       document.setIsFolder(rs.getBoolean("isFolder"));
                        document.setId(rs.getInt("id"));
                        document.setCreatedBy(rs.getInt("createdBy"));
                        document.setName(rs.getString("name"));
@@ -57,10 +61,11 @@ KeywordFacade kFac = null;
                         document.setFilename(rs.getString("filename"));
                         document.setKeywords(kFac.getKeywordsByDocument(document));
                     document.setFileDate(rs.getString("fileDate"));
-               
+               document.setDeleted(rs.getBoolean("deleted"));
                     document.setIdArea(rs.getInt("idArea"));
                    document.getArea().setName(rs.getString("nameArea"));
                    document.getUser().setName(rs.getString("nameCreatedBy"));
+                   document.setBackedUp(rs.getBoolean("backedUp"));
                       documents.add(document);
                    }
          }
@@ -95,20 +100,25 @@ KeywordFacade kFac = null;
                  getTomcatDataSource gd = new getTomcatDataSource();
          try {
         c = gd.getTomcatDataSource().getConnection();
-          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\",\"fileDate\",\"idArea\") VALUES (?,?,?,?)";
+          String SQL = "INSERT INTO \"public\".\"document\" (\"id\",\"fileName\",\"fileDate\",\"idArea\",\"isFolder\") VALUES (?,?,?,?,?)";
      	preparedStmt = c.prepareStatement(SQL);
          preparedStmt.setInt(1, dDto.getId());
             preparedStmt.setString(2, dDto.getFilename());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-             System.out.println("Dto.getFileDate().substring(0,10): " + dDto.getFileDate().substring(0,10));
+             //System.out.println("Dto.getFileDate().substring(0,10): " + dDto.getFileDate().substring(0,10));
             java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
             preparedStmt.setTimestamp(3, timestamp);
             preparedStmt.setInt(4, dDto.getIdArea());
-            
+            preparedStmt.setBoolean(5, dDto.getIsFolder());
           preparedStmt.executeUpdate();
              
-         
+               TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dDto.getId());
+             tDto.getTransactionTypeDTO().setId(3);
+             tDto.getUsuarioDTO().setId(dDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
          }
           catch (Exception e)
             {
@@ -190,24 +200,34 @@ KeywordFacade kFac = null;
 
     @Override
     public DocumentDTO updateDocument(DocumentDTO dDto) {
+     //   System.out.println("Hello : " +dDto.getDeleted());
     DocumentDTO objectDto = null;
               getTomcatDataSource gd = new getTomcatDataSource(); 
-     // getTomcatDataSource gd = new getTomcatDataSource();
+     
         ResultSet rs = null;
         Connection c = null;
         PreparedStatement preparedStmt = null;
      
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "update \"public\".\"document\" set \"fileDate\"=? where \"id\"=? ";
+               String SQL = "update \"public\".\"document\" set \"fileDate\"=?,\"deleted\"=?,\"backedUp\"=? where \"id\"=? ";
                 preparedStmt = c.prepareStatement(SQL);
           SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date parsedDate = dateFormat.parse(dDto.getFileDate().substring(0,10));
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
             preparedStmt.setTimestamp(1, timestamp);
-            preparedStmt.setInt(2, dDto.getId());
-            
+            preparedStmt.setBoolean(2, dDto.getDeleted());
+            preparedStmt.setBoolean(3, dDto.getBackedUp());
+            preparedStmt.setInt(4, dDto.getId());
                 preparedStmt.executeUpdate();
+                
+                
+                  TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dDto.getId());
+             tDto.getTransactionTypeDTO().setId(4);
+             tDto.getUsuarioDTO().setId(dDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
               
     }
          catch (Exception e){
@@ -253,7 +273,7 @@ KeywordFacade kFac = null;
 //        }
         //|| !filters.getFilterQuery().equals("") 
           if (filters.getKeywords().size()>0 ||filters.getDates().getOldestCreatedOn() != null || filters.getDates().getNewestCreatedOn() != null|| filters.getDates().getOldestFileDate() != null|| filters.getDates().getNewestFileDate() != null){
-               SQL += "SELECT \"documentKeywordRelationship\".\"idDocument\", \"object\".\"createdBy\", \"object\".\"name\" AS \"keywordName\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\" AS \"createdBy_0\", \"object2\".\"color\", \"object2\".\"kind\", \"object3\".\"name\" AS \"nameArea\", \"object_alias1\".\"name\" AS \"nameCreatedBy\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object_alias1\" ON \"object2\".\"createdBy\" = \"object_alias1\".\"id\" ";
+               SQL += "SELECT \"documentKeywordRelationship\".\"idDocument\", \"object\".\"createdBy\", \"object\".\"name\" AS \"keywordName\", \"documentKeywordRelationship\".\"idKeyword\", \"document\".\"id\", \"document\".\"fileName\", \"document\".\"isFolder\", \"document\".\"idArea\", \"document\".\"fileDate\", \"object2\".\"id\" AS \"id_0\", \"object2\".\"name\" AS \"name\", \"object2\".\"description\", \"object2\".\"createdOn\", \"object2\".\"createdBy\" AS \"createdBy_0\", \"object2\".\"color\", \"object2\".\"kind\", \"object3\".\"name\" AS \"nameArea\", \"object_alias1\".\"name\" AS \"nameCreatedBy\" FROM \"documentKeywordRelationship\" JOIN \"keyword\" ON \"documentKeywordRelationship\".\"idKeyword\" = \"keyword\".\"id\" JOIN \"object\" ON \"keyword\".\"id\" = \"object\".\"id\" JOIN \"document\" ON \"documentKeywordRelationship\".\"idDocument\" = \"document\".\"id\" JOIN \"object\" AS \"object2\" ON \"document\".\"id\" = \"object2\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object_alias1\" ON \"object2\".\"createdBy\" = \"object_alias1\".\"id\" ";
         
               SQL +=" where ";
           }
@@ -325,6 +345,7 @@ KeywordFacade kFac = null;
                        document = new DocumentDTO();
                        document.setId(rs.getInt("id"));
                        document.setCreatedBy(rs.getInt("createdBy"));
+                        document.setIsFolder(rs.getBoolean("isFolder"));
                        document.setName(rs.getString("name"));
                        document.setDescription(rs.getString("description"));
                         document.setColor(rs.getString("color"));
@@ -383,6 +404,7 @@ KeywordFacade kFac = null;
 //SELECT "object"."id", "object"."createdBy", "object"."name", "object"."description", "object"."createdOn", "object"."createdBy", "object"."color", "object"."kind", "document"."fileName", "document"."fileDate", "document"."idArea", "object2"."name" AS "nameCreatedBy", "object3"."name" AS "nameArea", "area"."enabled", "area"."enabled" FROM "document" JOIN "object" ON "document"."id" = "object"."id" JOIN "object" AS "object2" ON "object"."createdBy" = "object2"."id" JOIN "area" ON "document"."idArea" = "area"."id" JOIN "object" AS "object3" ON "area"."id" = "object3"."id" ORDER BY "object"."createdOn" ASC WHERE "area"."enabled" = TRUE
     @Override
     public ArrayList<DocumentDTO> getDocumentsOnlyEnabled(ArrayList<areaDTO> areas) {
+        System.out.println("Only Enabled");
         System.out.println("areas : " + areas.size());
      kFac = new KeywordFacade ();
         ArrayList<DocumentDTO> documents = null;
@@ -394,7 +416,7 @@ KeywordFacade kFac = null;
        documents = new ArrayList<DocumentDTO> ();
          try{
                c = gd.getTomcatDataSource().getConnection();
-               String SQL = "SELECT \"object\".\"id\", \"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"idArea\", \"object2\".\"name\" AS \"nameCreatedBy\", \"object3\".\"name\" AS \"nameArea\", \"area\".\"enabled\", \"area\".\"enabled\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" JOIN \"area\" ON \"document\".\"idArea\" = \"area\".\"id\" JOIN \"object\" AS \"object3\" ON \"area\".\"id\" = \"object3\".\"id\" WHERE \"area\".\"enabled\" = TRUE  ";
+               String SQL = "SELECT \"object\".\"id\", \"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"fileDate\", \"document\".\"isFolder\", \"document\".\"idArea\", \"object2\".\"name\" AS \"nameCreatedBy\", \"object3\".\"name\" AS \"nameArea\", \"area\".\"enabled\", \"area\".\"enabled\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" JOIN \"area\" ON \"document\".\"idArea\" = \"area\".\"id\" JOIN \"object\" AS \"object3\" ON \"area\".\"id\" = \"object3\".\"id\" WHERE \"area\".\"enabled\" = TRUE AND  \"document\".\"deleted\" = FALSE ";
               if (areas.size()>0){
                  SQL = SQL + " AND ("; 
               }
@@ -414,6 +436,7 @@ KeywordFacade kFac = null;
                        document = new DocumentDTO();
                        document.setId(rs.getInt("id"));
                        document.setCreatedBy(rs.getInt("createdBy"));
+                        document.setIsFolder(rs.getBoolean("isFolder"));
                        document.setName(rs.getString("name"));
                        document.setDescription(rs.getString("description"));
                         document.setColor(rs.getString("color"));
@@ -427,6 +450,63 @@ KeywordFacade kFac = null;
                          document.setVisible(getVisible(rs.getInt("idArea"), areas));
                document.getArea().setName(rs.getString("nameArea"));
                document.getUser().setName(rs.getString("nameCreatedBy"));
+                      documents.add(document);
+                   }
+         }
+         catch (Exception e){
+             e.printStackTrace();
+         }
+         finally{
+             try{
+                 if (rs != null){
+                     rs.close();
+                 }
+                  if (c != null){
+                     c.close();
+                 }
+                   if (ps != null){
+                     ps.close();
+                 }
+             }
+             catch (Exception e2){
+                 e2.printStackTrace();
+             }
+         }
+        return documents;}
+
+    @Override
+    public ArrayList<DocumentDTO> getDocumentsByUser(UsuarioDTO dto) {
+       kFac = new KeywordFacade ();
+        ArrayList<DocumentDTO> documents = null;
+     DocumentDTO document = null;
+       getTomcatDataSource gd = new getTomcatDataSource();
+        ResultSet rs = null;
+        Connection c = null;
+        PreparedStatement ps = null;
+       documents = new ArrayList<DocumentDTO> ();
+         try{
+               c = gd.getTomcatDataSource().getConnection();
+               String SQL = "SELECT \"object\".\"id\",\"object\".\"createdBy\", \"object\".\"name\", \"object\".\"description\", \"object\".\"createdOn\", \"object\".\"createdBy\", \"object\".\"color\", \"object\".\"kind\", \"document\".\"fileName\", \"document\".\"isFolder\", \"document\".\"deleted\", \"document\".\"fileDate\", \"document\".\"idArea\", \"object3\".\"name\" AS \"nameArea\", \"object2\".\"name\" AS \"nameCreatedBy\" FROM \"document\" JOIN \"object\" ON \"document\".\"id\" = \"object\".\"id\" JOIN \"object\" AS \"object3\" ON \"document\".\"idArea\" = \"object3\".\"id\" JOIN \"object\" AS \"object2\" ON \"object\".\"createdBy\" = \"object2\".\"id\" where \"object\".\"createdBy\" = ?  ORDER BY \"object\".\"createdOn\" ASC";
+               ps = c.prepareStatement(SQL);
+                   ps.setInt(1, dto.getId()); 
+               rs = ps.executeQuery();
+                   while (rs.next()) {
+                       document = new DocumentDTO();
+                       document.setId(rs.getInt("id"));
+                       document.setCreatedBy(rs.getInt("createdBy"));
+                        document.setIsFolder(rs.getBoolean("isFolder"));
+                       document.setName(rs.getString("name"));
+                       document.setDescription(rs.getString("description"));
+                        document.setColor(rs.getString("color"));
+                           document.setDeleted(rs.getBoolean("deleted"));
+                        document.setCreatedOn(rs.getTimestamp("createdOn"));
+                        document.setKind(rs.getString("kind"));
+                        document.setFilename(rs.getString("filename"));
+                        document.setKeywords(kFac.getKeywordsByDocument(document));
+                    document.setFileDate(rs.getString("fileDate"));
+                    document.setIdArea(rs.getInt("idArea"));
+                   document.getArea().setName(rs.getString("nameArea"));
+                   document.getUser().setName(rs.getString("nameCreatedBy"));
                       documents.add(document);
                    }
          }

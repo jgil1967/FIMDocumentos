@@ -32,8 +32,24 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                     
                     if (document != "") {
                         if (document.id == 0) {
-
-                            $mdDialog.show({
+                            if (document.isFolder == true){
+                                 $mdDialog.show({
+                                controller: documentDialogController,
+                                controllerAs: 'ctrl',
+                                templateUrl: 'documentDialogFolder.tmpl.html',
+                                parent: angular.element(document.body),
+                                targetEvent: documentosService.getEvent(),
+                                clickOutsideToClose: true,
+                                locals: {
+                                    document: document,
+                                    update: false,
+                                    areas: $scope.areasFiltradas,
+                                    fileUpload: fileUpload
+                                }
+                            });   
+                            }
+                            else{
+                                   $mdDialog.show({
                                 controller: documentDialogController,
                                 controllerAs: 'ctrl',
                                 templateUrl: 'documentDialog.tmpl.html',
@@ -47,10 +63,32 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                     fileUpload: fileUpload
                                 }
                             });
+                            }
+                         
+                            
+                            
                         } else {
 
                             document.fileDate = new Date(document.fileDate);
-                            $mdDialog.show({
+                            
+                            if (document.isFolder == true){
+                                 $mdDialog.show({
+                                controller: documentDialogController,
+                                controllerAs: 'ctrl',
+                                templateUrl: 'documentDialogFolder.tmpl.html',
+                                parent: angular.element(document.body),
+                                targetEvent: documentosService.getEvent(),
+                                clickOutsideToClose: true,
+                                locals: {
+                                    document: document,
+                                    update: true,
+                                    areas: $scope.areasFiltradas,
+                                    fileUpload: fileUpload
+                                }
+                            });
+                            }
+                            else{
+                               $mdDialog.show({
                                 controller: documentDialogController,
                                 controllerAs: 'ctrl',
                                 templateUrl: 'documentDialog.tmpl.html',
@@ -63,7 +101,10 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                     areas: $scope.areasFiltradas,
                                     fileUpload: fileUpload
                                 }
-                            });
+                            });  
+                            }
+                            
+                           
                         }
 
                     }
@@ -74,6 +115,9 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
 
         function documentDialogController($scope, $http, $timeout, $q, documentosService, document, update, areas, fileUpload, tagsService, documentKeywordRelationshipService)
         {
+            
+            
+            $scope.trabajando = false;
             
             $scope.shouldShow = function (area) {
   // put your authorization logic here
@@ -166,7 +210,7 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
 
             $scope.editDocument = function () {
 
-
+$scope.trabajando = true;
                 documentKeywordRelationshipService.deleteDocumentKeywordRelationshipsByDocument($scope.document).then(function (data) {
                     // window.console.log("Se han borrado las relaciones de este documento");
                 });
@@ -176,25 +220,85 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                 window.console.log($scope.document);
                 documentosService.updateDocument($scope.document).then(function (data) {
                     $mdDialog.hide();
-
+$scope.trabajando = false;
                 });
 
 
 
             }
 
+
+$scope.nuevoDocumentFolder = function () {
+     $scope.trabajando = true;
+      $scope.document.fileDate = new Date($("#fileDate").val());
+          $scope.document.filename = $scope.document.name; 
+      
+       documentosService.createDocument($scope.document).then(function (data) {
+                                $mdDialog.hide();
+                                $scope.document = data;
+                                angular.forEach($scope.tags, function (tag, key) {
+                                    if ("id" in tag) {
+                                        $scope.dDto = {
+                                            idKeyword: tag.id,
+                                            idDocument: $scope.document.id
+                                        };
+                                        documentKeywordRelationshipService.createdocumentKeywordRelationship($scope.dDto).then(function (data) {
+                                        });
+
+                                    } else {
+                                        tag.createdBy = $("#idUsuario").val();
+                                        
+                                        tagsService.createTag(tag).then(function (data) {
+                                            $scope.dDto = {
+                                                idKeyword: data.id,
+                                                idDocument: $scope.document.id
+                                            };
+
+                                            documentKeywordRelationshipService.createdocumentKeywordRelationship($scope.dDto).then(function (data) {
+                                                
+
+                                            });
+                                            countries.push($scope.dDto);
+                                        });
+
+                                    }
+                                });
+                                $scope.document.keywords = $scope.tags;
+                                documentosService.addToList($scope.document);
+                            });
+
+                                $scope.trabajando = false;
+                                    
+      
+}
+
+$scope.editDocumentFolder = function () {
+   
+$scope.trabajando = true;
+                documentKeywordRelationshipService.deleteDocumentKeywordRelationshipsByDocument($scope.document).then(function (data) {
+                    // window.console.log("Se han borrado las relaciones de este documento");
+                });
+                $scope.document.keywords = $scope.tags;
+                $scope.tagsStuff();
+                $scope.document.fileDate = new Date($("#fileDate").val());
+                window.console.log($scope.document);
+                documentosService.updateDocument($scope.document).then(function (data) {
+                    $mdDialog.hide();
+$scope.trabajando = false;
+                });
+
+     
+}
+
             $scope.nuevoDocument = function () {
-                
+                $scope.trabajando = true;
                 var file = $scope.myFile;
-                console.dir($scope.myFile);
-                console.dir($scope.myFile.name);
+              
                 $scope.myFile.name = "NuevoNombreDude"
                 $scope.document.filename = $scope.myFile.name;
                 $scope.document.fileDate = new Date($("#fileDate").val());
-                window.console.log(JSON.stringify("Documento : " + JSON.stringify($scope.document)  ));
                 var uploadUrl = "/FIMDocumentos/FIMRest/hello/upload";
                 var fields = [{"name": "name", "data": document.name}, {"name": "description", "data": document.description}];
-                
                 var fd = new FormData();
                 fd.append('file', file);
                 for (var i = 0; i < fields.length; i++) {
@@ -241,8 +345,8 @@ app.controller('documentDialogController', ['$scope', '$http', '$filter', '$time
                                 documentosService.addToList($scope.document);
                             });
 
-
-
+                                $scope.trabajando = false;
+                                    
 
 
                         })

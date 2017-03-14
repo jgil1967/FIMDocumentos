@@ -5,9 +5,10 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
            setTimeout(function(){ 
                
                $scope.loggedUser = usuariosService.getLoggedUser();
-               window.console.log($scope.loggedUser );
+               
+               
                if ($scope.loggedUser.root == true ){
-                   $scope.getUsuarios(); 
+                   $scope.getUsuarios($scope.loggedUser); 
                }
                else if ($scope.loggedUser.root == false && $scope.loggedUser.isAdministrator == true){
                   window.console.log("Solo administrador");
@@ -52,8 +53,8 @@ app.controller('usuariosController',['$scope','topBannerService','usuariosServic
             };
                $scope.users = [];
               
-                 $scope.getUsuarios = function (){
-                  usuariosService.getUsuarios().then(function(d) {
+                 $scope.getUsuarios = function (loggedUser){
+                  usuariosService.getUsuarios(loggedUser).then(function(d) {
                    $scope.users = usuariosService.getList();
              
                 });

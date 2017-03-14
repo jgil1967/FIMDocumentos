@@ -1,10 +1,16 @@
-<div class="col s12 m12"  >
+<div class="col s12 m12" ng-controller="documentosController" >
      <md-toolbar class="md-theme-light" >
     <h2 class="md-toolbar-tools">
       <span>Documentos</span>
-      <md-button style="color: white;" class="md-icon-button" ng-click="createDocument($event)">
+      <md-button style="color: white;" ng-click="createDocument($event)">
      
           <md-icon>add</md-icon>
+          Nuevo documento
+    </md-button>
+       <md-button style="color: white;" ng-click="createDocumentFolder($event)">
+     
+          <md-icon>add</md-icon>
+          Nueva carpeta
     </md-button>
       
     </h2>
@@ -22,20 +28,15 @@
         <li>
       <div class="collapsible-header"><i class="material-icons">filter_list</i>Filtros</div>
       <div class="collapsible-body">
-            <div style="font-weight: bold;">Areas</div>
-      <md-input-container >
-<!--          <md-button  class="md-primary md-raised"  ng-click="selectedAreas=backup; setAllSelectedAreas();">Todas las áreas</md-button>
-<md-button  class="md-primary md-raised"  ng-click="selectedAreas=[]; emptySelectedAreas();">Ningún área</md-button>
- -->
-
-<md-select ng-model="selectedAreas" multiple style="min-width: 100%;  width: 100vw; display: inline-block;" aria-label="selected areas">
-         
-            <md-optgroup label="Areas">
-            <md-option  ng-value="area.id" ng-repeat="area in areas ">{{area.name}}</md-option>
-          </md-optgroup>
-        </md-select>
-      </md-input-container>
           
+           <md-button  class="md-primary md-raised"  ng-click=" init();llenarTodos ();">Todas las áreas</md-button>
+
+          <div input-field>
+    <select class=""    ng-change="changed()" id="areasSeleccionadas" ng-model="areasSeleccionadas" material-select multiple watch>
+        <option  ng-repeat="area in areas" id="{{area.id}}">{{area.name}}</option>
+    </select>
+</div>
+
             
 <div style="font-family: Roboto,'Helvetica Neue',sans-serif;">
     <div style="font-weight: bold;">Palabras clave</div>
@@ -88,35 +89,68 @@
 
     <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
       <tr md-row>
+           <th md-column md:order:by="name"><span>Tipo</span></th>
         <th md-column md:order:by="name"><span>Nombre</span></th>
         <th md-column md:order:by="description"><span>Descripción</span></th>
         
         <th md-column md:order:by="createdOn"><span>Subido</span></th>
         <th md-column md:order:by="area.name"><span>Area</span></th>
         <th md-column md:order:by="user.name"><span>Creado por</span></th>
+<!--Estado del documento-->
+     <th md-column  ng-show="loggedUser.root"><span>Borrado</span></th>
+ <th md-column ng-show="loggedUser.root"><span>Respaldar</span></th>
         <th md-column ><span>Editar</span></th>
         <th md-column ><span>Descarga</span></th>
-        
+       
       </tr>
     </thead>
     <tbody md-body>
       <tr md-row md-select="table" md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"  data-ng-repeat="document in  filteredDocuments()  | filter:searchDocumentos | orderBy: query.order | limitTo: query.limit : (query.page - 1) * query.limit">
-     <td md-cell>{{ document.name| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
+       
+          <td md-cell> <span ng-show="document.isFolder == true"><i class="material-icons">folder</i></span> <span ng-show="document.isFolder == false"><i class="material-icons">insert_drive_file</i> </span>  </td>
+          <td md-cell>  {{ document.name| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
      <td md-cell>{{ document.description| limitTo: 20 }}{{document.name.length > 20 ? '...' : ''}}</td>
      
      <td md-cell>{{document.createdOn | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
      <td md-cell>{{document.area.name}}</td>
      <td md-cell>{{document.user.name}}</td>
+    
+<!--     Estado del documento - checkbox - Activo o inactivo -->
+       <td md-cell  ng-show="loggedUser.root">   
+           
+           
+
+          <md-switch ng-model="document.deleted" aria-label="Habilitado" ng-change="borrarORestaurar(document)">
+     </md-switch>
+         
+           
+           
+             </td>
+             
+              <td md-cell>
+     <md-button ng-disabled="document.backedUp==true || uploading==true" ng-click="subirDocumento(document)" class="md-fab md-primary" aria-label="Editar">
+       <i class="material-icons">cloud_upload</i>
+        </md-button>
+     
+     </td>
+             
      <td md-cell>    
            <md-button ng-show="document.visible" ng-click="updateDocument($event,document)" class="md-fab md-primary" aria-label="Editar">
        <i class="material-icons">border_color</i>
         </md-button>
          </td>
-     <td md-cell>
+         
+<!--         downloadFolder-->
+     <td md-cell ng-show="document.isFolder == false" >
           <md-button ng-href="/FIMDocumentos/FIMRest/hello/downloadDocument/{{document.filename}}" class="md-fab md-primary" aria-label="Ver columnas">
        <i class="material-icons">file_download</i>
         </md-button>
-     </td>
+       </td>
+       <td md-cell ng-show="document.isFolder == true" >
+          <md-button ng-href="/FIMDocumentos/FIMRest/hello/downloadFolder/{{document.filename}}" class="md-fab md-primary" aria-label="Ver columnas">
+       <i class="material-icons">file_download</i>
+        </md-button>
+       </td>
 
       </tr>
     </tbody>

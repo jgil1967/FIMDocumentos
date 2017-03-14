@@ -5,6 +5,7 @@
  */
 package sample.hello.resources;
 
+
 import com.uas.dbutil.getTomcatDataSource;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -15,16 +16,23 @@ import com.uas.areas.areaFacade;
 import com.uas.dates.DatesDTO;
 import com.uas.dates.DatesFacade;
 import com.uas.dates.filters.filtersDTO.FiltersDTO;
+import com.uas.dbBackup.DbBackupDTO;
+import com.uas.dbBackup.DbBackupFacade;
 import com.uas.document.DocumentDTO;
 import com.uas.document.DocumentFacade;
 import com.uas.documentKeywordRelationship.documentKeywordRelationshipDTO;
 import com.uas.documentKeywordRelationship.documentKeywordRelationshipFacade;
+import com.uas.googleDrive.googleDriveFacade;
 import com.uas.keyword.KeywordDTO;
 import com.uas.keyword.KeywordFacade;
 import com.uas.object.ObjectDTO;
 import com.uas.object.ObjectFacade;
+import com.uas.transactionRecord.TransactionRecordDTO;
+import com.uas.transactionRecord.TransactionRecordFacade;
 import com.uas.usuarios.UsuarioDTO;
 import com.uas.usuarios.UsuarioFacade;
+import com.uas.googleDriveBackups.googleDriveBackupDTO;
+import com.uas.googleDriveBackups.googleDriveBackupFacade;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,8 +43,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.naming.NamingException;
@@ -109,7 +115,51 @@ public class apiUas {
         return arFac.deleteAreaRelationship(dto);
     }
     
-    //es por la librería de JSON
+    
+    String nombreArchivo = "";
+    
+    @POST
+     @Consumes({MediaType.APPLICATION_JSON})
+       @Produces(MediaType.APPLICATION_JSON)
+     @Path("/createDatabaseBackup")  
+    public DbBackupDTO createDatabaseBackup (DbBackupDTO dto){
+       nombreArchivo = dto.getNombreBackup();
+         DbBackupFacade fac = new DbBackupFacade();
+          fac.backupDatabase(dto);
+         
+            return dto;     
+         
+    }
+    
+      @POST
+     @Consumes({MediaType.APPLICATION_JSON})
+       @Produces(MediaType.APPLICATION_JSON)
+     @Path("/createDocumentsBackup")  
+    public googleDriveBackupDTO createDocumentsBackup (){
+      
+           googleDriveFacade gFac = new googleDriveFacade();
+          return gFac.subirArchivos();
+         
+    }
+    
+     TransactionRecordFacade tFac = null;
+      @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getTransactionRecords")
+     public ArrayList<TransactionRecordDTO> getTransactionRecords(){
+      tFac = new TransactionRecordFacade();
+             return tFac.getTransactionRecords();
+             }
+    
+      @GET
+		 @Produces(MediaType.APPLICATION_JSON)
+                 @Path("/getDocumentBackups")
+		public ArrayList<googleDriveBackupDTO> getDocumentBackups() 
+                {
+         googleDriveBackupFacade   gFac = new googleDriveBackupFacade();
+             return gFac.getBackups();
+                }
+                
                   @GET
 		 @Produces(MediaType.APPLICATION_JSON)
                  @Path("/getDocuments")
@@ -117,6 +167,14 @@ public class apiUas {
                 {
             dFac = new DocumentFacade();
              return dFac.getDocuments();
+                }
+                    @POST
+		 @Produces(MediaType.APPLICATION_JSON)
+                  @Path("/getDocumentsByUser")
+		public ArrayList<DocumentDTO> getDocumentsByUser(UsuarioDTO dto) 
+                {
+                 dFac = new DocumentFacade();
+                 return dFac.getDocumentsByUser(dto);
                 }
                  @POST
 		 @Produces(MediaType.APPLICATION_JSON)
@@ -126,13 +184,14 @@ public class apiUas {
             dFac = new DocumentFacade();
              return dFac.getDocumentsOnlyEnabled(areas);
                 }
-                   @GET
+                   @POST
 		 @Produces(MediaType.APPLICATION_JSON)
                  @Path("/getUsuarios")
-		public ArrayList<UsuarioDTO> getUsuarios() 
+		public ArrayList<UsuarioDTO> getUsuarios(UsuarioDTO dto) 
                 {
+                   // System.out.println("dto user : " + dto.getId());
             uFac = new UsuarioFacade();
-             return uFac.obtenerUsuariosForRoot();
+             return uFac.obtenerUsuariosForRoot(dto);
                 }
                  @GET
 		 @Produces(MediaType.APPLICATION_JSON)
@@ -277,13 +336,89 @@ public class apiUas {
          return arFac.uploadAndEdit(dto);
       }
       
+          @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/restoreDocument")
+    public DocumentDTO restoreDocument(DocumentDTO dDto) throws Exception
+    {
+        System.out.println("dDto : " + dDto.getDeleted());
+       dFac = new DocumentFacade();
+       
+       System.out.println("pathForFiles : " + returnPath("pathForFiles") + dDto.getFilename());
+        System.out.println("pathForTrash : " + returnPath("pathForTrash") +  dDto.getFilename());
+        
+        
+    	   File afile =new File(returnPath("pathForTrash") + dDto.getFilename());
+
+    	   if(afile.renameTo(new File( returnPath("pathForFiles") +  dDto.getFilename()))){
+    		System.out.println("File is moved successful!");
+    	   }else{
+    		System.out.println("File is failed to move!");
+    	   }
+        
+            dFac.updateDocument(dDto);
+            TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dDto.getId());
+             tDto.getTransactionTypeDTO().setId(10);
+             tDto.getUsuarioDTO().setId(dDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
+           
+       return dDto;
+    }
+     
+     @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/backupDocument")
+     public DocumentDTO backupDocument(DocumentDTO dDto) throws Exception
+    {
+      googleDriveFacade gFac = new googleDriveFacade ();
+      
+        return gFac.backupDocument(dDto);
+    }
+    
+          @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/deleteDocument")
+    public DocumentDTO deleteDocument(DocumentDTO dDto) throws Exception
+    {
+        System.out.println("dDto : " + dDto.getDeleted());
+       dFac = new DocumentFacade();
+       
+       System.out.println("pathForFiles : " + returnPath("pathForFiles") + dDto.getFilename());
+        System.out.println("pathForTrash : " + returnPath("pathForTrash") +  dDto.getFilename());
+        
+        
+    	   File afile =new File(returnPath("pathForFiles") + dDto.getFilename());
+
+    	   if(afile.renameTo(new File( returnPath("pathForTrash") +  dDto.getFilename()))){
+    		System.out.println("File is moved successful!");
+    	   }else{
+    		System.out.println("File is failed to move!");
+    	   }
+        
+            dFac.updateDocument(dDto);
+           
+            TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(dDto.getId());
+             tDto.getTransactionTypeDTO().setId(9);
+             tDto.getUsuarioDTO().setId(dDto.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
+             
+             
+       return dDto;
+    }
+     
             @POST
     @Consumes({MediaType.APPLICATION_JSON})
      @Produces(MediaType.APPLICATION_JSON)
     @Path("/updateDocument")
     public DocumentDTO updateDocument(DocumentDTO dDto) throws Exception
     {
-        
        oFac = new ObjectFacade();
        oFac.updateObject(dDto);
        dFac = new DocumentFacade();
@@ -320,6 +455,12 @@ public class apiUas {
      //   //System.out.println("tag : "+ tag.toString());
        oFac = new ObjectFacade();
      oFac.updateObject(tag);
+      TransactionRecordFacade tFac = new TransactionRecordFacade();
+             TransactionRecordDTO tDto = new TransactionRecordDTO();
+             tDto.getObjectDTO().setId(tag.getId());
+             tDto.getTransactionTypeDTO().setId(6);
+             tDto.getUsuarioDTO().setId(tag.getCreatedBy());
+             tFac.createTransactionRecord(tDto);
        return  tag;
     }
     //createDocumentKeywordRelationship
@@ -369,24 +510,69 @@ public class apiUas {
         return "Hello Jersey";
     }
     
-    //X-Y-Z-SATELITE 7.docx
+    
+    
     @GET
-    @Path("/downloadDocument/{filename}")
-    public Response downloadDocument(@PathParam("filename") final String filename) throws Exception
-    {
-        //System.out.println("Filename : "+ filename);
-     
-       StreamingOutput fileStream =  new StreamingOutput() 
+     @Path("/pruebaDrive")
+    public void pruebaDrive (){
+      googleDriveFacade gFac = new googleDriveFacade();
+      gFac.pruebaDrive();
+    }
+    
+    
+    
+    @GET
+    @Path("/downloadBackup/{filename}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+     public Response downloadBackup(@PathParam("filename") final String filename) throws Exception
+    {StreamingOutput fileStream =  new StreamingOutput() 
         {
             @Override
             public void write(java.io.OutputStream output) throws IOException, WebApplicationException 
             {
                 try
                 {
-                    java.nio.file.Path path = Paths.get(returnPath()+filename);
+                    java.nio.file.Path path = Paths.get(returnPath("pathForBackups")+filename+".sql");
                     byte[] data = Files.readAllBytes(path);
-                    output.write(data);
+                 output.write(data);
                     output.flush();
+                    output.close();
+                } 
+                catch (Exception e) 
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+        return Response
+                .ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
+                .header("content-disposition","attachment; filename = "+filename+".sql")
+                .build();
+        
+     
+    }
+    
+    
+    @GET
+    @Path("/downloadDocument/{filename}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+
+    public Response downloadDocument(@PathParam("filename") final String filename) throws Exception
+    {
+        
+      //  download(returnPath("pathForFiles")+filename);
+         StreamingOutput fileStream =  new StreamingOutput() 
+        {
+            @Override
+            public void write(java.io.OutputStream output) throws IOException, WebApplicationException 
+            {
+                try
+                {
+                    java.nio.file.Path path = Paths.get(returnPath("pathForFiles")+filename);
+                    byte[] data = Files.readAllBytes(path);
+                 output.write(data);
+                    output.flush();
+                    output.close();
                 } 
                 catch (Exception e) 
                 {
@@ -409,8 +595,8 @@ public class apiUas {
     String nombreFinal = "";
     public String checkIfExistsAndReturnValid (String fileName, String name){
         
-              //System.out.println("File existed : " + fileName);
-              //System.out.println("File name : " + name);
+              System.out.println("File existed : " + fileName);
+              System.out.println("File name : " + name);
               nombreFinal = name;
                  File f = new File(fileName);
 
@@ -443,20 +629,13 @@ if (i > 0) {
     
     
     
-    public String returnPath(){
-       // //System.out.println(new File(".").getAbsolutePath());
+    public String returnPath(String property){
 	Properties prop = new Properties();
 	InputStream input = null;
-
 	try {
-
 		input = new FileInputStream("config.properties");
-
-		// load a properties file
 		prop.load(input);
-
-		// get the property value and print it out
-		return prop.getProperty("pathForFiles");
+		return prop.getProperty(property);
 
 	} catch (IOException ex) {
 		ex.printStackTrace();
@@ -480,11 +659,15 @@ if (i > 0) {
 		@FormDataParam("file") FormDataContentDisposition fileDetail) {
         num=0;
         String output = "";
-		//String uploadedFileLocation = "/Users/jonathangil/apache-tomcat-8.0.37/FIMFiles/" + fileDetail.getFileName();
-               String uploadedFileLocation = returnPath() + fileDetail.getFileName();
-              String rutaAGuardar =  checkIfExistsAndReturnValid(uploadedFileLocation,fileDetail.getFileName());
-          ////////
-                writeToFile(uploadedInputStream, rutaAGuardar);
+          String nuevoNombre = fileDetail.getFileName().replace(" ", "");
+		 String uploadedFileLocation = returnPath("pathForFiles") + nuevoNombre;
+                 System.out.println("Hello world dude");
+               
+                 System.out.println("nuevo nombre : " + nuevoNombre);
+                 
+                 
+              String rutaAGuardar =  checkIfExistsAndReturnValid(uploadedFileLocation,nuevoNombre);
+                 writeToFile(uploadedInputStream, rutaAGuardar);
 		 output = rutaAGuardar;
 	return Response.status(200).entity(nombreFinal).build();
 

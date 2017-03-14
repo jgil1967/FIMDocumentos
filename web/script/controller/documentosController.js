@@ -1,5 +1,5 @@
-app.controller('documentosController',['$http','$scope','topBannerService','documentosService','areasService','usuariosService',
-     function ($http,$scope,topBannerService,documentosService,areasService,usuariosService)
+app.controller('documentosController',['$http','$scope','topBannerService','documentosService','areasService','usuariosService','documentsBackupService',
+     function ($http,$scope,topBannerService,documentosService,areasService,usuariosService,documentsBackupService)
     { 
  setTimeout(function(){ $('.collapsible').collapsible(); 
  
@@ -11,15 +11,37 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
     
  }, 700);
       $scope.areas= [];
+        $scope.areasSeleccionadas= [];
        $scope.selectedAreas= [];
               $scope.usuarios= [];
        $scope.selectedUsuarios= []; 
+       
+        var selectedValues = [];   
+       $scope.changed = function (){
+                selectedValues = [];   
+    $("#areasSeleccionadas option").each(function(){
+                   // window.console.log($(this));
+                    if ($(this).prop("selected") == true) {
+           selectedValues.push(parseInt($(this).attr('id')));
+    } else {
+                  //  window.console.log($(this).prop("selected") );
+    }
+    
+    });
+    //console.log("ONLY SELECTED: " + selectedValues);
+     $scope.filteredDocuments();
+$scope.safeApply ();
+       }
+       
+         
                 $scope.filteredDocuments = function () {
     return $scope.documents.filter(function (document) {
-       return $scope.selectedAreas.indexOf(document.idArea) !== -1 ;
+       
+
+        return selectedValues.indexOf(document.idArea) !== -1 ;
     });
   };
-              window.console.log("ENTRANDO A CONTROLADOR");
+              //window.console.log("ENTRANDO A CONTROLADOR");
                 $scope.obteniendo = false; 
               $scope.emptySelectedAreas = function (){
                   $scope.selectedAreas=[];
@@ -28,19 +50,67 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
                 $scope.selectedAreas=$scope.backup;
               };
               $scope.backup  = [];
-               setTimeout(function(){  
-                      if ($scope.obteniendo == false){
+              
+              
+              $( document ).ready(function() {
+    $('select').material_select();
+     $scope.init();
+$scope.llenarTodos ();
+});
+
+
+$scope.safeApply = function(fn) {
+  var phase = this.$root.$$phase;
+  if(phase == '$apply' || phase == '$digest') {
+    if(fn && (typeof(fn) === 'function')) {
+      fn();
+    }
+  } else {
+    this.$apply(fn);
+  }
+};
+
+
+$scope.quitarTodo = function (){
+      setTimeout(function(){ 
+        var el = document.getElementById("areasSeleccionadas");
+                   
+                    for (var i = 0; i < el.length; i++) {
+                   el[i].setAttribute('selected',false);
+    }
+// window.console.log(el);
+ $scope.changed ();
+}, 500);
+}
+
+
+
+
+$scope.llenarTodos = function (){
+           // window.console.log("Vamos a llenar todas las seleccionadas");
+    setTimeout(function(){ 
+        var el = document.getElementById("areasSeleccionadas");
+                   
+                    for (var i = 0; i < el.length; i++) {
+                        
+                   el[i].setAttribute('selected',true);
+    }
+ //window.console.log(el);
+ $scope.changed ();
+}, 500);
+}
+
+              $scope.init = function (){
+                     if ($scope.obteniendo == false){
                  $scope.obteniendo = true;
                    $scope.loggedUser = usuariosService.getLoggedUser(); 
+                   //window.console.log( $scope.loggedUser );
                    if ($scope.loggedUser.area.superuser == false){
                      var area = {id:$scope.loggedUser.idArea,name:$scope.loggedUser.area.name};
                      areasService.getAreasByArea2(area).then(function(d) {
                    $scope.areas= areasService.getList();
-                        window.console.log($scope.areas);
-                        angular.forEach($scope.areas, function (area, key) {
-                       $scope.selectedAreas.push(area.id);
-                          $scope.backup.push(area.id);  
-                   });
+                        //window.console.log($scope.areas);
+                        
                  
                    $scope.getDocumentsOnlyEnabled($scope.areas);  
                });    
@@ -49,19 +119,12 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
                          $scope.getDocuments(); 
                            areasService.getAreas().then(function(d) {
                    $scope.areas= areasService.getList();
-                        angular.forEach($scope.areas, function (area, key) {
-                       $scope.selectedAreas.push(area.id);
-                            $scope.backup.push(area.id);  
-                            });    
-                         
+                        
                      });   
-                       
                    }
-                   
                 }
-                  
-              } , 100);
-                
+              }
+             
             
               //por esto entra dos veces wey
                 $scope.getDocumentsOnlyEnabled = function (areas){
@@ -71,22 +134,39 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
                  documentosService.getDocumentsOnlyEnabled(areas).then(function(d) {
                         $scope.documents = documentosService.getList();
                         $scope.obteniendo = false;
-                        window.console.log($scope.documents );
+                      //  window.console.log($scope.documents );
                     });
                   
                  }; 
          $scope.getDocuments = function (){
            
                  documentosService.getDocuments().then(function(d) {
-                     window.console.log(   $scope.documents);
+                     //window.console.log(   $scope.documents);
                         $scope.documents = documentosService.getList();
                         $scope.obteniendo = false;
                     });
              
                   
                  };  
+  $scope.uploading = false;
   
-       
+  
+       $scope.subirDocumento = function (document){
+           if (document.isFolder){
+                window.console.log("Folder");
+           }
+           else{
+              
+           $scope.uploading = true;
+            window.console.log(document);
+              documentsBackupService.backupDocument(document).then(function (data) {
+                   $scope.getDocuments();
+                   $scope.uploading = false;
+
+                }); 
+           }
+            
+       }
        
        
                $scope.options = {
@@ -105,7 +185,38 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
     limit: 10,
     page: 1
   };
-        
+         $scope.clear = function(){
+    $scope.myModel = undefined;
+  };
+  
+  $scope.borrarORestaurar = function (document){
+       document.idUsuario = $("#idUsuario").val();
+            //window.console.log(document);   
+            if (document.deleted == false){
+                          if (confirm('¿Esta seguro de que desea restaurar este documento?')) {
+                   document.deleted = false;
+                    documentosService.restoreDocument(document).then(function (data) {
+                   $scope.getDocuments();
+
+                });
+} else {
+   $scope.init();
+}
+    
+            }
+            else{
+                    if (confirm('¿Esta seguro de que desea eliminar este documento?')) {
+                   document.deleted = true;
+                    documentosService.deleteDocument(document).then(function (data) {
+                   $scope.getDocuments();
+
+                });
+} else {
+   $scope.init();
+}
+    
+            }
+  }
         
          $scope.downloadDocument = function (document){
               $scope.document = document;
@@ -117,15 +228,23 @@ app.controller('documentosController',['$http','$scope','topBannerService','docu
          };
         
          $scope.updateDocument = function ($event,document){
+             
        documentosService.updateDocumentDialog($event,document);
+       
    }; 
         
          
           topBannerService.setTitle("Documentos");
             $scope.createDocument = function ($event){
-             $scope.document = { id:0, fileDate:new Date(), name:'', description:'',idArea:0,createdBy: $("#idUsuario").val(), color:"#01579b",kind:"document" };
+             $scope.document = { id:0, isFolder:false, fileDate:new Date(), name:'', description:'',idArea:0,createdBy: $("#idUsuario").val(), color:"#01579b",kind:"document" };
               documentosService.updateDocumentDialog($event,$scope.document );
             };
+            
+              $scope.createDocumentFolder = function ($event){
+             $scope.document = { id:0, isFolder:true,fileDate:new Date(), name:'', description:'',idArea:0,createdBy: $("#idUsuario").val(), color:"#01579b",kind:"document" };
+              documentosService.updateDocumentDialog($event,$scope.document );
+            };
+            
                $scope.documents = [];
               
               $scope.dateRangeFilter = function (property, startDate, endDate) {
@@ -212,7 +331,7 @@ $scope.search = function ($event){
                         filterQuery: $scope.searchDocumentos
                     }
                 documentosService.getDocumentsFilters(filters).then(function() {
-                    window.console.log("documentosService.getList() : " + documentosService.getList());
+                  //  window.console.log("documentosService.getList() : " + documentosService.getList());
                 $scope.documents = documentosService.getList();
                 
                 //Ya se por que es dude

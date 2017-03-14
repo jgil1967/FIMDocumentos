@@ -1,18 +1,23 @@
 app.service('contentsService', function()
 {
        var contentsRoot = [
-              {name: "Documentos",url:"documentos"},
+              {name: "Todos los documentos",url:"documentos"},
+                {name: "Mis documentos",url:"subidospormi"},
               {name: "Areas",url:"areas"},
               {name: "Usuarios",url:"usuarios"},
               {name: "Palabras clave",url:"keywords"},
-              {name: "Cambiar mi contraseña",url:"userSettings"}
+              {name: "Cambiar mi contraseña",url:"userSettings"},
+              {name: "Respaldo de base de datos",url:"databaseBackup"},
+              {name: "Respaldo de documentos",url:"documentsBackup"},
+               {name: "Transacciones",url:"transactions"}
 //              {name: "Búsqueda",url:"busqueda"}/*,
   //            {name: "Búsqueda",url:"busqueda"}/*,
     //          {name: "Tablas",url:"tablas"},
       //        {name: "Servidores",url:"servidores"}*/
           ];
             var contentsAdministrator = [
-              {name: "Documentos",url:"documentos"},
+              {name: "Todos los documentos",url:"documentos"},
+                {name: "Mis documentos",url:"subidospormi"},
               {name: "Usuarios",url:"usuarios"},
               {name: "Palabras clave",url:"keywords"},
               {name: "Cambiar mi contraseña",url:"userSettings"}
@@ -22,7 +27,8 @@ app.service('contentsService', function()
       //        {name: "Servidores",url:"servidores"}*/
           ];
             var contentsNormal = [
-              {name: "Documentos",url:"documentos"},
+              {name: "Todos los documentos",url:"documentos"},
+             {name: "Mis documentos",url:"subidospormi"},
               {name: "Palabras clave",url:"keywords"},
               {name: "Cambiar mi contraseña",url:"userSettings"}
 //              {name: "Búsqueda",url:"busqueda"}/*,

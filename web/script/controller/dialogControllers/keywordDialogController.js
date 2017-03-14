@@ -55,6 +55,7 @@
    
     
     $scope.editKeyword = function (){
+          $scope.keyword.createdBy =  $("#idUsuario").val();
         keywordsService.updateKeyword($scope.keyword ).then(function(d) {
             $mdDialog.hide();
         });

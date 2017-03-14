@@ -28,6 +28,19 @@ app.service('documentosService',function($http){
         });  
         
     },
+      getDocumentsByUser: function(user) {
+   
+       return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/getDocumentsByUser",
+    data: JSON.stringify(user)
+}).then(function(result){
+    
+          documents = result.data;
+            
+        });  
+        
+    },
       getDocumentsFilters: function(filters) {
             window.console.log("Filters: " + JSON.stringify(filters));
  return  $http({
@@ -72,6 +85,25 @@ app.service('documentosService',function($http){
  return  $http({
     method: 'POST',
     url: "/FIMDocumentos/FIMRest/hello/updateDocument",
+    data: JSON.stringify(document)
+}).then(function(result){
+    
+            return result.data;
+        });  },
+    
+    deleteDocument: function(document) {
+ return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/deleteDocument",
+    data: JSON.stringify(document)
+}).then(function(result){
+    
+            return result.data;
+        });  },
+      restoreDocument: function(document) {
+ return  $http({
+    method: 'POST',
+    url: "/FIMDocumentos/FIMRest/hello/restoreDocument",
     data: JSON.stringify(document)
 }).then(function(result){
     

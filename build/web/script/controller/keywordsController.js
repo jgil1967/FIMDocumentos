@@ -26,7 +26,9 @@ topBannerService.setTitle("Palabras clave");
   };
       
 $scope.updateKeyword = function ($event,keyword){
-            
+            keyword.createdBy =  $("#idUsuario").val();
+            window.console.log(keyword);
+            window.console.log( $("#idUsuario").val());
             keywordsService.updateKeywordDialog($event,keyword);
 }
 
